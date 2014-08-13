@@ -60,7 +60,7 @@ This is an early version. I appreciate any feedback, comments, and help if you t
 ## AngularJS version
 
 An AngularJS version (ForceNG) implemented as a service and using promises instead of callback functions is available
- [here]().
+ [here](https://github.com/ccoenraets/forceng).
 
 ## Proxy Server
 
