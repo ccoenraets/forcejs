@@ -64,7 +64,7 @@ An AngularJS version (ForceNG) implemented as a service and using promises inste
 
 ## Proxy Server
 
-ForceJS has been tested with two proxy servers:
+Because of the browser's cross-origin restrictions, your JavaScript application hosted on your own server (or localhost) will not be able to make API calls directly to the *.salesforce.com domain. The solution is to proxy your API calls through your own server. ForceJS has been tested with two proxy servers:
 - [cors-proxy](https://github.com/ccoenraets/cors-proxy): A node.js implementation
 - [sf-cors-proxy](https://github.com/jamesward/sf-cors-proxy): A Scala / Play implementation by James Ward
 

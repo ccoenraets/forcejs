@@ -218,14 +218,14 @@ var force = (function () {
                     refreshToken(
                         function () {
                             // Try again with the new token
-                            request(obj, success, error)
+                            request(obj, success, error);
                         },
                         function () {
                             console.error(xhr.responseText);
                             var error = xhr.responseText ? JSON.parse(xhr.responseText) : {message: 'An error has occurred'};
                             if (error) error(error);
                         }
-                    )
+                    );
                 } else {
                     console.error(xhr.responseText);
                     var errorObj = xhr.responseText ? JSON.parse(xhr.responseText) : {message: 'An error has occurred'};
@@ -450,6 +450,6 @@ var force = (function () {
         retrieve: retrieve,
         discardToken: discardToken,
         oauthCallback: oauthCallback
-    }
+    };
 
 }());
