@@ -4,7 +4,7 @@
  */
 var force = (function () {
 
-    var LOGIN_URL = 'https://login.salesforce.com',
+    var loginUrl = 'https://login.salesforce.com',
 
     // The Connected App client Id
         appId,
@@ -63,6 +63,8 @@ var force = (function () {
         tokenStore = params.tokenStore || tokenStore;
         oauthRedirectURL = params.oauthRedirectURL || oauthRedirectURL;
         proxyURL = params.proxyURL || proxyURL;
+        loginUrl = params.loginUrl || loginUrl;
+ 
 
         // Load previously saved token
         if (tokenStore['forceOAuth']) {
@@ -124,7 +126,7 @@ var force = (function () {
         }
 
         startTime = new Date().getTime();
-        loginWindow = window.open(LOGIN_URL + '/services/oauth2/authorize?client_id=' + appId + '&redirect_uri=' + oauthRedirectURL +
+        loginWindow = window.open(loginUrl + '/services/oauth2/authorize?client_id=' + appId + '&redirect_uri=' + oauthRedirectURL +
             '&response_type=token', '_blank', 'location=no');
 
         // If the app is running in Cordova, listen to URL changes in the InAppBrowser until we get a URL with an access_token or an error
@@ -257,7 +259,7 @@ var force = (function () {
                 'client_id': appId
             };
 
-        var url = proxyURL ? proxyURL : LOGIN_URL;
+        var url = proxyURL ? proxyURL : loginUrl;
 
         url = url + '/services/oauth2/token?' + toQueryString(params);
 
@@ -279,7 +281,7 @@ var force = (function () {
 
         xhr.open('POST', url, true);
         if (proxyURL) {
-            xhr.setRequestHeader("Target-URL", LOGIN_URL);
+            xhr.setRequestHeader("Target-URL", loginUrl);
         }
         xhr.send();
     }
