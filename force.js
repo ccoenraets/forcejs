@@ -64,7 +64,7 @@ var force = (function () {
         oauthRedirectURL = params.oauthRedirectURL || oauthRedirectURL;
         proxyURL = params.proxyURL || proxyURL;
         loginUrl = params.loginUrl || loginUrl;
- 
+
 
         // Load previously saved token
         if (tokenStore['forceOAuth']) {
@@ -163,6 +163,14 @@ var force = (function () {
         } else {
             if (loginErrorHandler) loginErrorHandler({status: 'access_denied'});
         }
+    }
+
+    /**
+     * Gets the user's ID (if logged in)
+     * @returns {string} | undefined
+     */
+    function getUserId() {
+        return (typeof(oauth) !== 'undefined') ? oauth.id.split('/').pop() : undefined;
     }
 
     /**
@@ -443,6 +451,7 @@ var force = (function () {
         init: init,
         login: login,
         isLoggedIn: isLoggedIn,
+        getUserId: getUserId,
         request: request,
         query: query,
         create: create,
