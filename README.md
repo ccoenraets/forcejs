@@ -138,7 +138,7 @@ ForceJS abstracts these differences and allows you to run your app in the browse
 An AngularJS version (ForceNG) implemented as a service and using promises instead of callback functions is available
  [here](https://github.com/ccoenraets/forceng).
 
-## Other Libraries
+### Other Libraries
 
 - [ForceTK](https://github.com/developerforce/Force.com-JavaScript-REST-Toolkit): Proven toolkit for Salesforce REST APIs. Leverages jQuery.
 - [NForce](https://github.com/kevinohara80/nforce): node.js a REST API wrapper for force.com, database.com, and salesforce.com.
