@@ -75,41 +75,44 @@ Visit the [force-server repository](https://github.com/ccoenraets/force-server) 
 ## Sample App
 
 Create a file named index.html anywhere on you file system:
-    ```
-    [html]
-    <html>
-    <body>
-    <ul id="list"></ul>
-    <script src="force.js"></script>
-    <script>
-    force.login(function() {
-        force.query('select id, Name from contact LIMIT 50', function (response) {
-            var str = '';
-            for (var i = 0; i < response.records.length; i++) {
-                str += '<li>' + response.records[i].Name + '</li>';
-            }
-            document.getElementById('list').innerHTML = str;
-        });
+
+```
+[html]
+<html>
+<body>
+<ul id="list"></ul>
+<script src="force.js"></script>
+<script>
+force.login(function() {
+    force.query('select id, Name from contact LIMIT 50', function (response) {
+        var str = '';
+        for (var i = 0; i < response.records.length; i++) {
+            str += '<li>' + response.records[i].Name + '</li>';
+        }
+        document.getElementById('list').innerHTML = str;
     });
-    </script>
-    </body>
-    </html>
-    [/html]
-    ```
+});
+</script>
+</body>
+</html>
+[/html]
+```
 
 ## Run the Server
 
 Navigate to the directory where you created index.html, and type:
-    ```
-    force-server
-    ``` 
+
+```
+force-server
+``` 
     
 This command will start the server on port 8200, and automatically load your app (http://localhost:8200) in a browser window. You'll see the Salesforce login window, and the list of contacts will appear after you log in.
 
 You can change the port number and the web root. Type the following command for more info:
-    ```
-    force-server --help
-    ```
+
+```
+force-server --help
+```
 
 ## Code Highlights
 
