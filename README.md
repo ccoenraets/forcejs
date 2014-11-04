@@ -80,7 +80,7 @@ Create a file named index.html anywhere on you file system:
 <html>
 <body>
 <ul id="list"></ul>
-<script src="force.js"></script>
+<script src="http://ccoenraets.github.io/forcejs/force.js"></script>
 <script>
 force.login(function() {
     force.query('select id, Name from contact LIMIT 50', function (response) {
