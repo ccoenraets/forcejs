@@ -77,7 +77,6 @@ Visit the [force-server repository](https://github.com/ccoenraets/force-server) 
 Create a file named index.html anywhere on you file system:
 
 ```
-[html]
 <html>
 <body>
 <ul id="list"></ul>
@@ -95,7 +94,6 @@ force.login(function() {
 </script>
 </body>
 </html>
-[/html]
 ```
 
 ## Run the Server
