@@ -12,7 +12,7 @@ Visualforce page), consider using Visualforce Remoting or Remote Objects to acce
 
 This is an early version. I appreciate any feedback, comments, and help if you think this library is useful.
    
-## Key Characteristics
+### Key Characteristics
 
 - No jQuery dependency
 - Plain JavaScript (ForceJS) and Angular Service ([ForceNG](https://github.com/ccoenraets/forceng)) versions
@@ -23,7 +23,7 @@ This is an early version. I appreciate any feedback, comments, and help if you t
 - Node.js or Play/Scala proxies with CORS support available separately
 - Includes simple Bootstrap sample app 
 
-## Usage
+### Usage
 
 1. Initialize (Optional):
 
@@ -62,7 +62,7 @@ This is an early version. I appreciate any feedback, comments, and help if you t
         });
     ```
 
-## ForceServer
+### ForceServer
 
 Because of the browser's cross-origin restrictions, your JavaScript application hosted on your own server (or localhost) will not be able to make API calls directly to the *.salesforce.com domain. The solution is to proxy your API calls through your own server. You can use your own proxy server, but to provide an integrated development experience, ForceJS works smoothly with ForceServer, a simple development server for Force.com. It provides two main features: 
 
@@ -72,7 +72,7 @@ Because of the browser's cross-origin restrictions, your JavaScript application 
 Visit the [force-server repository](https://github.com/ccoenraets/force-server) for more information.
 
 
-## Sample App
+### Sample App
 
 Create a file named index.html anywhere on you file system:
 
@@ -104,7 +104,7 @@ Code Highlights:
 
 
 
-## Run the Server
+### Run the Server
 
 Navigate to the directory where you created index.html, and type:
 
@@ -120,7 +120,7 @@ You can change the port number and the web root. Type the following command for 
 force-server --help
 ```
 
-## Transparently Running Hybrid Apps on Device and in the Browser
+### Transparently Running Hybrid Apps on Device and in the Browser
 
 If you develop a hybrid application using the Mobile SDK, you often switch back and forth between running the app in the browser and on device: Developing in the browser is generally faster and easier to debug, but you still need to test device-specific features and check that everything runs as expected on the target platforms. The problem is that the configuration of OAuth and REST is different when running in the browser and on-device. Here is a summary of the key differences:
 
@@ -133,7 +133,7 @@ If you develop a hybrid application using the Mobile SDK, you often switch back 
 ForceJS abstracts these differences and allows you to run your app in the browser and on device without code or configuration change.
 
 
-## AngularJS version
+### AngularJS version
 
 An AngularJS version (ForceNG) implemented as a service and using promises instead of callback functions is available
  [here](https://github.com/ccoenraets/forceng).
