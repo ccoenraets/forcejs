@@ -1,5 +1,6 @@
 /**
  * ForceJS - REST toolkit for Salesforce.com
+ * Author: Christophe Coenraets @ccoenraets
  * Version: 0.4
  */
 var force = (function () {
@@ -99,7 +100,7 @@ var force = (function () {
                 'client_id': appId
             },
 
-            url = proxyURL || loginURL;
+            url = oauthPlugin ? loginURL : proxyURL;
 
         url = url + '/services/oauth2/token?' + toQueryString(params);
 
@@ -123,7 +124,7 @@ var force = (function () {
         };
 
         xhr.open('POST', url, true);
-        if (proxyURL) {
+        if (!oauthPlugin) {
             xhr.setRequestHeader("Target-URL", loginURL);
         }
         xhr.send();
