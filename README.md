@@ -1,14 +1,14 @@
 # ForceJS
 
 ForceJS is a micro-library that makes it easy to use the Salesforce REST APIs in JavaScript applications.
-ForceJS allows you to easily login into Salesforce using OAuth, and to manipulate your Salesforce data using a simple
+ForceJS allows you to easily login to Salesforce using OAuth, and to manipulate your Salesforce data using a simple
 API.
 
 ForceJS is similar to [ForceTK](https://github.com/developerforce/Force.com-JavaScript-REST-Toolkit), but has no jQuery dependency and comes with an AngularJS version ([ForceNG](https://github.com/ccoenraets/forceng)).
 
-The main target for ForceJS are applications running on your own server (Heroku or elsewhere) and Cordova/Mobile SDK apps accessing Salesforce through REST services.  
+The main target for ForceJS are applications running on your own server (Heroku or elsewhere) and Cordova/Mobile SDK applications.  
 
-## Browser and Cordova Support without Code Changes
+## Browser and Cordova without Code Changes
 
 If you develop a hybrid application using the Mobile SDK, you often switch back and forth between running the app in the browser and on device: Developing in the browser is generally faster and easier to debug, but you still need to test device-specific features and check that everything runs as expected on the target platforms. The problem is that the configuration of OAuth and REST is different when running in the browser and on device. Here is a summary of the key differences:
 
@@ -60,7 +60,7 @@ To create and run a minimalistic sample app using ForceJS:
 
     That's it! This is all you need to authenticate with OAuth, retrieve a list of contacts from Salesforce, and display that list in HTML.
     
-    > The ```<script src="cordova.js"></script>``` line is there to support running the app in Cordova. Note that the cordova.js file does not have to be present in your directory: it is automatically injected by the Cordova build process. If you know you will never run your app in Cordova, feel free to remove that line.
+    > The ```<script src="cordova.js"></script>``` line is there to support running the app in Cordova. Note that the ```cordova.js``` file does not have to be present in your directory: it is automatically injected by the Cordova build process. If you know you will never run your app in Cordova, feel free to remove that line.
 
 1. Install force-server
 
@@ -70,7 +70,7 @@ To create and run a minimalistic sample app using ForceJS:
     npm install -g force-server
     ```
 
-    or (Unix-based systems)
+    On a Mac, you may have to use sudo:
 
     ```
     sudo npm install -g force-server
@@ -84,9 +84,11 @@ To create and run a minimalistic sample app using ForceJS:
     force-server
     ```
 
-    This starts the ForceServer server on port 8200 and loads your sample app in your default browser. After authenticating against your developer org, you should see a list of employees.  
+    This starts the ForceServer server on port 8200 and loads your sample app in your default browser. After authenticating against your developer org, you should see a list of contacts.  
 
 ## Running in Cordova with the Mobile SDK
+
+To run the same application in Cordova:
 
 1. Install Cordova:
 
@@ -120,9 +122,9 @@ To create and run a minimalistic sample app using ForceJS:
 
 1. Delete the contents of the ```contactforce/www``` directory
 
-1. Copy the index.html and force.js file created above in the ```contactforce/www``` directory
+1. Copy ```force.js``` and the ```index.html``` file created above in the ```contactforce/www``` directory
 
-5. Create the Salesforce Mobile SDK config file (bootconfig.json) in the www folder of your project:
+1. Create a file named bootconfig.json (the Salesforce Mobile SDK config file) in the ```contactforce/www``` directory and implement it as follows:
 
     ```
     {
@@ -142,7 +144,7 @@ To create and run a minimalistic sample app using ForceJS:
     
     > For a production application, you should create a Connected App in Salesforce and provide your own Connected App ID and Callback URI.
 
-6. Add a platform. For example to add iOS:
+6. Add a platform. For example, to add iOS:
 
     ```
     cordova platform add ios
@@ -154,9 +156,9 @@ To create and run a minimalistic sample app using ForceJS:
     cordova build ios
     ```
 
-Run the project. For example, for iOS, open the project (platforms/ios/contactforce.xcodeproj) in Xcode and run it in the emulator or on your iOS device.After authenticating against your developer org, you should see a list of employees.  
+Run the project. For example, for iOS, open the project (platforms/ios/contactforce.xcodeproj) in Xcode and run it in the emulator or on your iOS device. After authenticating against your developer org, you should see a list of contacts.  
 
-> Note that you didn't change any code in to run the app in Cordova. When running in Cordova, ForceJS automatically uses the Salesforce Mobile SDK PAuth plugin, and invokes REST services without using a proxy because the webview used in Cordova is not subject to the same cross domain policies.
+> Note that you didn't change any code to run the app in Cordova. When running in Cordova, ForceJS automatically uses the Salesforce Mobile SDK OAuth plugin, and invokes REST services without using a proxy because the webview used in Cordova is not subject to the same cross domain policy restrictions.
 
 ## Other Samples
 
@@ -193,7 +195,7 @@ Even though you should consider using Visualforce Remoting or Remote Objects to 
 </apex:page>
 ```
 
-Notice that in this case, you don't have to login: you just initialize ForceJS with the existing session id.
+> Notice that in this case, you don't have to login: you just initialize ForceJS with the existing session id.
 
 ## API Reference
 
@@ -506,7 +508,16 @@ An AngularJS version (ForceNG) implemented as a service and using promises inste
 
 ## Other Libraries
 
+ForceJS was built based on the following requirements:
+
+- Client-side REST library 
+- Minimalistic with no dependency
+- Full OAuth workflow
+- Browser and Cordova-based execution without code or configuration changes
+
+Depending on your own requirements, you may also want to consider one of the following libraries:  
+
 - [ForceTK](https://github.com/developerforce/Force.com-JavaScript-REST-Toolkit): Proven toolkit for Salesforce REST APIs. Leverages jQuery.
-- [NForce](https://github.com/kevinohara80/nforce): node.js a REST API wrapper for force.com, database.com, and salesforce.com.
+- [NForce](https://github.com/kevinohara80/nforce): node.js REST API wrapper for force.com, database.com, and salesforce.com.
 - [ngForce](https://github.com/noeticpenguin/ngForce): A set of Angular.js modules that facilitate quick and sustainable Angular.js application development on the Force.com Platform. 
 - [JSForce](http://jsforce.github.io/): Integrate your JavaScript application with Salesforce in different scenarios
