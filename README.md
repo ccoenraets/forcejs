@@ -515,7 +515,7 @@ ForceJS was built based on the following requirements:
 - Full OAuth workflow
 - Browser and Cordova-based execution without code or configuration changes
 
-Depending on your own requirements, you should also consider one of the following libraries:  
+Depending on your own requirements, you should also consider the following libraries:  
 
 - [ForceTK](https://github.com/developerforce/Force.com-JavaScript-REST-Toolkit): Proven toolkit for Salesforce REST APIs. Leverages jQuery.
 - [NForce](https://github.com/kevinohara80/nforce): node.js REST API wrapper for force.com, database.com, and salesforce.com.
