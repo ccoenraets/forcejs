@@ -1,25 +1,27 @@
 /**
  * ForceJS - REST toolkit for Salesforce.com
  * Author: Christophe Coenraets @ccoenraets
- * Version: 0.4
+ * Version: 0.6
  */
 var force = (function () {
 
     "use strict";
 
+    // The login URL for the OAuth process
+    // To override default, pass loginURL in init(props)
     var loginURL = 'https://login.salesforce.com',
 
     // The Connected App client Id. Default app id provided - Not for production use.
+    // This application supports http://localhost:8200/oauthcallback.html as a valid callback URL
+    // To override default, pass appId in init(props)
         appId = '3MVG9fMtCkV6eLheIEZplMqWfnGlf3Y.BcWdOf1qytXo9zxgbsrUbS.ExHTgUPJeb3jZeT8NYhc.hMyznKU92',
 
-    // The force.com API version to use. Default can be overriden in login()
-        apiVersion = 'v32.0',
+    // The force.com API version to use.
+    // To override default, pass apiVersion in init(props)
+        apiVersion = 'v33.0',
 
-    // Keep track of OAuth data (mainly access_token and refresh_token)
+    // Keep track of OAuth data (access_token, refresh_token, and instance_url)
         oauth,
-
-    // Only required when using REST APIs in an app hosted on your own server to avoid cross domain policy issues
-        proxyURL = "http://localhost:8200",
 
     // By default we store fbtoken in sessionStorage. This can be overridden in init()
         tokenStore = {},
@@ -27,10 +29,18 @@ var force = (function () {
     // if page URL is http://localhost:3000/myapp/index.html, context is /myapp
         context = window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")),
 
+    // if page URL is http://localhost:3000/myapp/index.html, serverURL is http://localhost:3000
+        serverURL = window.location.protocol + '//' + window.location.hostname + (window.location.port ? ':' + window.location.port : ''),
+
     // if page URL is http://localhost:3000/myapp/index.html, baseURL is http://localhost:3000/myapp
-        baseURL = window.location.protocol + '//' + window.location.hostname + (window.location.port ? ':' + window.location.port : '') + context,
+        baseURL = serverURL + context,
+
+    // Only required when using REST APIs in an app hosted on your own server to avoid cross domain policy issues
+    // To override default, pass proxyURL in init(props)
+        proxyURL = baseURL,
 
     // if page URL is http://localhost:3000/myapp/index.html, oauthCallbackURL is http://localhost:3000/myapp/oauthcallback.html
+    // To override default, pass oauthCallbackURL in init(props)
         oauthCallbackURL = baseURL + '/oauthcallback.html',
 
     // Because the OAuth login spans multiple processes, we need to keep the login success and error handlers as a variables
@@ -38,8 +48,35 @@ var force = (function () {
         loginSuccessHandler,
         loginErrorHandler,
 
-    // Indicates if the app is running inside Cordova
-        oauthPlugin;
+    // Reference to the Salesforce OAuth plugin
+        oauthPlugin,
+
+    // Whether or not to use a CORS proxy. Defaults to false if app running in Cordova or in a VF page
+    // Can be overriden in init()
+        useProxy = (window.cordova || window.SfdcApp) ? false : true;
+
+    /*
+     * Determines the request base URL.
+     */
+    function getRequestBaseURL() {
+
+        var url;
+
+        if (useProxy) {
+            url = proxyURL;
+        } else if (oauth.instance_url) {
+            url = oauth.instance_url;
+        } else {
+            url = serverURL;
+        }
+
+        // dev friendly API: Remove trailing '/' if any so url + path concat always works
+        if (url.slice(-1) === '/') {
+            url = url.slice(0, -1);
+        }
+
+        return url;
+    }
 
     function parseQueryString(queryString) {
         var qs = decodeURIComponent(queryString),
@@ -74,7 +111,7 @@ var force = (function () {
                 }
             },
             function () {
-                console.log('Error refreshing oauth access token using the oauth plugin');
+                console.error('Error refreshing oauth access token using the oauth plugin');
                 if (error) {
                     error();
                 }
@@ -100,7 +137,7 @@ var force = (function () {
                 'client_id': appId
             },
 
-            url = oauthPlugin ? loginURL : proxyURL;
+            url = useProxy ? proxyURL : loginURL;
 
         url = url + '/services/oauth2/token?' + toQueryString(params);
 
@@ -124,7 +161,7 @@ var force = (function () {
         };
 
         xhr.open('POST', url, true);
-        if (!oauthPlugin) {
+        if (!useProxy) {
             xhr.setRequestHeader("Target-URL", loginURL);
         }
         xhr.send();
@@ -152,20 +189,13 @@ var force = (function () {
      */
     function init(params) {
 
-        console.log(params);
-
-        // Load previously saved token
-        if (tokenStore.forceOAuth) {
-            oauth = JSON.parse(tokenStore.forceOAuth);
-        }
-
         if (params) {
             appId = params.appId || appId;
             apiVersion = params.apiVersion || apiVersion;
-            tokenStore = params.tokenStore || tokenStore;
             loginURL = params.loginURL || loginURL;
             oauthCallbackURL = params.oauthCallbackURL || oauthCallbackURL;
             proxyURL = params.proxyURL || proxyURL;
+            useProxy = params.useProxy === undefined ? useProxy : params.useProxy;
 
             if (params.accessToken) {
                 if (!oauth) oauth = {};
@@ -182,6 +212,8 @@ var force = (function () {
                 oauth.refresh_token = params.refreshToken;
             }
         }
+
+        console.log("useProxy: " + useProxy);
 
     }
 
@@ -248,7 +280,6 @@ var force = (function () {
             }
             oauthPlugin.getAuthCredentials(
                 function (creds) {
-                    console.log(JSON.stringify(creds));
                     // Initialize ForceJS
                     init({accessToken: creds.accessToken, instanceURL: creds.instanceUrl, refreshToken: creds.refreshToken});
                     if (successHandler) successHandler();
@@ -284,7 +315,7 @@ var force = (function () {
      * Check the login status
      * @returns {boolean}
      */
-    function isLoggedIn() {
+    function isAuthenticated() {
         return (oauth && oauth.access_token) ? true : false;
     }
 
@@ -309,12 +340,7 @@ var force = (function () {
 
         var method = obj.method || 'GET',
             xhr = new XMLHttpRequest(),
-            url = oauthPlugin ? oauth.instance_url : proxyURL;
-
-        // dev friendly API: Remove trailing '/' if any so url + path concat always works
-        if (url.slice(-1) === '/') {
-            url = url.slice(0, -1);
-        }
+            url = getRequestBaseURL();
 
         // dev friendly API: Add leading '/' if missing so url + path concat always works
         if (obj.path.charAt(0) !== '/') {
@@ -326,8 +352,6 @@ var force = (function () {
         if (obj.params) {
             url += '?' + toQueryString(obj.params);
         }
-
-        console.log(url);
 
         xhr.onreadystatechange = function () {
             if (xhr.readyState === 4) {
@@ -365,14 +389,14 @@ var force = (function () {
         if (obj.contentType) {
             xhr.setRequestHeader("Content-Type", obj.contentType);
         }
-        if (!oauthPlugin) {
+        if (useProxy) {
             xhr.setRequestHeader("Target-URL", oauth.instance_url);
         }
         xhr.send(obj.data ? JSON.stringify(obj.data) : undefined);
     }
 
     /**
-     * Execute a SOQL query
+     * Convenience function to execute a SOQL query
      * @param soql
      * @param successHandler
      * @param errorHandler
@@ -389,7 +413,7 @@ var force = (function () {
     }
 
     /**
-     * Retrieve a single record based on its Id
+     * Convenience function to retrieve a single record based on its Id
      * @param objectName
      * @param id
      * @param fields
@@ -410,7 +434,7 @@ var force = (function () {
     }
 
     /**
-     * Create a new record
+     * Convenience function to create a new record
      * @param objectName
      * @param data
      * @param success
@@ -430,7 +454,7 @@ var force = (function () {
     }
 
     /**
-     * Update a record. You can either pass the sobject returned by retrieve or query or a simple JavaScript object.
+     * Convenience function to update a record. You can either pass the sobject returned by retrieve or query or a simple JavaScript object.
      * @param objectName
      * @param data The object to update. Must include the Id field.
      * @param successHandler
@@ -459,7 +483,7 @@ var force = (function () {
     }
 
     /**
-     * Delete a record
+     * Convenience function to delete a record
      * @param objectName
      * @param id
      * @param success
@@ -478,7 +502,7 @@ var force = (function () {
     }
 
     /**
-     * Upsert a record
+     * Convenience function to upsert a record
      * @param objectName
      * @param externalIdField
      * @param externalId
@@ -500,12 +524,64 @@ var force = (function () {
         );
     }
 
+    /**
+     * Convenience function to invoke APEX REST endpoints
+     * @param pathOrParams
+     * @param successHandler
+     * @param errorHandler
+     */
+    function apexrest(pathOrParams, successHandler, errorHandler) {
+
+        var params;
+
+        if (pathOrParams.substring) {
+            params = {path: pathOrParams};
+        } else {
+            params = pathOrParams;
+
+            if (params.path.charAt(0) !== "/") {
+                params.path = "/" + params.path;
+            }
+
+            if (params.path.substr(0, 18) !== "/services/apexrest") {
+                params.path = "/services/apexrest" + params.path;
+            }
+        }
+
+        request(params, successHandler, errorHandler);
+    }
+
+    /**
+     * Convenience function to invoke the Chatter API
+     * @param pathOrParams
+     * @param successHandler
+     * @param errorHandler
+     */
+    function chatter(params, successHandler, errorHandler) {
+
+        var base = "/services/data/" + apiVersion + "/chatter";
+
+        if (!params || !params.path) {
+            errorHandler("You must specify a path for the request");
+            return;
+        }
+
+        if (params.path.charAt(0) !== "/") {
+            params.path = "/" + params.path;
+        }
+
+        params.path = base + params.path;
+
+        request(params, successHandler, errorHandler);
+
+    }
+
     // The public API
     return {
         init: init,
         login: login,
         getUserId: getUserId,
-        isLoggedIn: isLoggedIn,
+        isAuthenticated: isAuthenticated,
         request: request,
         query: query,
         create: create,
@@ -513,6 +589,8 @@ var force = (function () {
         del: del,
         upsert: upsert,
         retrieve: retrieve,
+        apexrest: apexrest,
+        chatter: chatter,
         discardToken: discardToken,
         oauthCallback: oauthCallback
     };
