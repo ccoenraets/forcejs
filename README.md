@@ -76,7 +76,7 @@ To create and run a minimalistic sample app using ForceJS:
     ```
     sudo npm install -g force-server
     ```
-
+    
 1. Run the application.
 
     Open a command prompt, navigate to your sample app directory and type the following command:
@@ -86,6 +86,8 @@ To create and run a minimalistic sample app using ForceJS:
     ```
 
     This starts the ForceServer server on port 8200 and loads your sample app in your default browser. After authenticating against your developer org, you should see a list of contacts.  
+
+> Starting in the Spring 15 release, some Salesforce REST APIs (like Chatter and sobjects) support CORS. To allow an app to make direct REST calls against your org, register the app domain in Setup: Administer > Security Controls > CORS.
 
 ## Running in Cordova with the Mobile SDK
 
@@ -230,6 +232,8 @@ Parameters:
     *Default*: **false** if the app is running in Cordova or in a Visualforce page, **true** if it's not 
 
     By default, ForceJS will automatically determine if it needs to use a CORS proxy: It won't use a proxy if the app is running inside a Visualforce page or a Cordova app, and will use the proxy in any other case. You can force ForceJS to always use a proxy by setting this value to true.
+    
+    Starting in the Spring 15 release, some Salesforce REST APIs (like Chatter and sobjects) support CORS. To allow an app to make direct REST calls against your org, register the app domain in Setup: Administer > Security Controls > CORS. If you whitelist your domain and use APIs that support CORS, you can set useProxy to false.
 
 - **loginURL**
 
