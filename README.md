@@ -1,5 +1,5 @@
 # ForceJS
-## REST Library for the Salesforce Platform 
+### REST Library for the Salesforce Platform 
 
 ForceJS is a micro-library that makes it easy to use the Salesforce REST APIs in JavaScript applications.
 ForceJS allows you to easily login to Salesforce using OAuth, and to manipulate your Salesforce data using a simple
