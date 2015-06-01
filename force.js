@@ -432,6 +432,39 @@ var force = (function () {
         );
 
     }
+    
+    /**
+     * Convenience function to retrieve an attachment
+     * @param id 
+     * @param successHandler
+     * @param errorHandler
+     */
+    function getAttachment(id, successHandler, errorHandler){
+        requestBinary(
+            {
+                path: '/services/data/' + apiVersion + '/sobjects/Attachment/' + id + '/Body'
+            },
+            successHandler,
+            errorHandler
+        );
+    }
+
+    /**
+     * Convenience function to retrieve picklist values from a SalesForce Field
+     * @param objectName
+     * @param successHandler
+     * @param errorHandler
+     */
+    function getPickListValues(objectName, successHandler, errorHandler){
+        request(
+            {
+                path: '/services/data/' + apiVersion + '/sobjects/' + objectName + '/describe'
+            },
+            successHandler,
+            errorHandler
+        );
+    }
+    
 
     /**
      * Convenience function to create a new record
@@ -592,7 +625,9 @@ var force = (function () {
         apexrest: apexrest,
         chatter: chatter,
         discardToken: discardToken,
-        oauthCallback: oauthCallback
+        oauthCallback: oauthCallback,
+        getPickListValues: getPickListValues,
+        getAttachment: getAttachment
     };
 
 }());
