@@ -51,9 +51,9 @@ var force = (function () {
     // Reference to the Salesforce OAuth plugin
         oauthPlugin,
 
-    // Whether or not to use a CORS proxy. Defaults to false if app running in Cordova or in a VF page
-    // Can be overriden in init()
-        useProxy = (window.cordova || window.SfdcApp) ? false : true;
+    // Whether or not to use a CORS proxy. Defaults to false if app running in Cordova, in a VF page,
+    // or using the Salesforce console. Can be overriden in init()
+        useProxy = (window.cordova || window.SfdcApp || window.sforce) ? false : true;
 
     /*
      * Determines the request base URL.
