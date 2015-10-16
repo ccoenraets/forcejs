@@ -1,5 +1,8 @@
 # ForceJS
-### REST Library for the Salesforce Platform 
+
+NOTE: An ES6 version of ForceJS (allowing you to load ForceJS as an ES6 module) is available in the [es6 branch](https://github.com/ccoenraets/forcejs/tree/es6).
+
+### REST Library for the Salesforce Platform
 
 ForceJS is a micro-library that makes it easy to use the Salesforce REST APIs in JavaScript applications.
 ForceJS allows you to easily login to Salesforce using OAuth, and to manipulate your Salesforce data using a simple
@@ -60,7 +63,7 @@ To create and run a minimalistic sample app using ForceJS:
     ```
 
     That's it! This is all you need to authenticate with OAuth, retrieve a list of contacts from Salesforce, and display that list in HTML.
-    
+
     > The ```<script src="cordova.js"></script>``` line is there to support running the app in Cordova. Note that the ```cordova.js``` file does not have to be present in your directory: it is automatically injected by the Cordova build process. If you know you will never run your app in Cordova, feel free to remove that line.
 
 1. Install force-server
@@ -76,7 +79,7 @@ To create and run a minimalistic sample app using ForceJS:
     ```
     sudo npm install -g force-server
     ```
-    
+
 1. Run the application.
 
     Open a command prompt, navigate to your sample app directory and type the following command:
@@ -98,7 +101,7 @@ To run the same application in Cordova:
     ```
     npm install -g cordova
     ```
-    
+
     On a Mac, you may have to use sudo:
 
     ```
@@ -110,7 +113,7 @@ To run the same application in Cordova:
     ```
     cordova create contactforce com.samples.contactforce contactforce
     ```
-    
+
 1. Navigate (cd) to the project directory
 
     ```
@@ -144,7 +147,7 @@ To run the same application in Cordova:
       "attemptOfflineLoad": false
     }
     ```
-    
+
     > For a production application, you should create a Connected App in Salesforce and provide your own Connected App ID and Callback URI.
 
 6. Add a platform. For example, to add iOS:
@@ -152,7 +155,7 @@ To run the same application in Cordova:
     ```
     cordova platform add ios
     ```
-    
+
 7. Build the project:
 
     ```
@@ -174,7 +177,7 @@ Run the project. For example, for iOS, open the project (platforms/ios/contactfo
 
 ## Using ForceJS in Visualforce Pages
 
-Even though you should consider using Visualforce Remoting or Remote Objects to avoid the governor limits related to the REST APIs, you can run ForceJS in Visualforce pages. To run a Visualforce page version of the sample above, upload force.js as a static resource and create a Visualforce page defined as follows: 
+Even though you should consider using Visualforce Remoting or Remote Objects to avoid the governor limits related to the REST APIs, you can run ForceJS in Visualforce pages. To run a Visualforce page version of the sample above, upload force.js as a static resource and create a Visualforce page defined as follows:
 
 ```
 <apex:page>
@@ -223,16 +226,16 @@ Parameters:
 
 - **proxyURL**
 
-    The URL of the CORS proxy server. This parameter is ignored when the app is running in Cordova or inside a Visualforce page. 
-    
+    The URL of the CORS proxy server. This parameter is ignored when the app is running in Cordova or inside a Visualforce page.
+
     *Default*: The base URL the application was loaded from. For example, if you load the app from http://localhost:8200, the default proxyURL is http://localhost:8200. If you load the app from https://myserver.com/myapp, the default proxyURL is https://myserver.com/myapp
 
 - **useProxy**
 
-    *Default*: **false** if the app is running in Cordova or in a Visualforce page, **true** if it's not 
+    *Default*: **false** if the app is running in Cordova or in a Visualforce page, **true** if it's not
 
     By default, ForceJS will automatically determine if it needs to use a CORS proxy: It won't use a proxy if the app is running inside a Visualforce page or a Cordova app, and will use the proxy in any other case. You can force ForceJS to always use a proxy by setting this value to true.
-    
+
     Starting in the Spring 15 release, some Salesforce REST APIs (like Chatter and sobjects) support CORS. To allow an app to make direct REST calls against your org, register the app domain in Setup: Administer > Security Controls > CORS. If you whitelist your domain and use APIs that support CORS, you can set useProxy to false.
 
 - **loginURL**
@@ -419,20 +422,20 @@ Parameters:
     The HTTP method to execute: GET, POST, PUT, DELETE, PATCH
 
     *Default*: GET
-    
+
 - **contentType**     
 
     The request content type.
 
 
 - **params**
-    
+
     An object that will be turned into a query string appended to the request URL
-     
+
 - **data**
-     
+
     An object representing data to be sent as the body of the request.
-     
+
 
 ### isAuthenticated()
 
@@ -491,18 +494,18 @@ Parameters:
     The HTTP method to execute: GET, POST, PUT, DELETE, PATCH
 
     *Default*: GET
-    
+
 - **contentType**     
 
     The request content type.
 
 
 - **params**
-    
+
     An object that will be turned into a query string appended to the request URL
-     
+
 - **data**
-     
+
     An object representing data to be sent as the body of the request.
 
 
@@ -515,7 +518,7 @@ An AngularJS version (ForceNG) implemented as a service and using promises inste
 
 ForceJS was built based on the following requirements:
 
-- Client-side REST library 
+- Client-side REST library
 - Minimalistic with no dependency
 - Full OAuth workflow
 - Browser and Cordova-based execution without code or configuration changes
@@ -524,5 +527,5 @@ Depending on your own requirements, you should also consider the following libra
 
 - [ForceTK](https://github.com/developerforce/Force.com-JavaScript-REST-Toolkit): Proven toolkit for Salesforce REST APIs. Leverages jQuery.
 - [NForce](https://github.com/kevinohara80/nforce): node.js REST API wrapper for force.com, database.com, and salesforce.com.
-- [ngForce](https://github.com/noeticpenguin/ngForce): A set of Angular.js modules that facilitate quick and sustainable Angular.js application development on the Force.com Platform. 
+- [ngForce](https://github.com/noeticpenguin/ngForce): A set of Angular.js modules that facilitate quick and sustainable Angular.js application development on the Force.com Platform.
 - [JSForce](http://jsforce.github.io/): Integrate your JavaScript application with Salesforce in different scenarios
