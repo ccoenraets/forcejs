@@ -17,9 +17,9 @@
         </div>
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
-                <li><a href="javascript:login()">Login</a></li>
-                <li><a href="javascript:discardToken()">Discard Token</a></li>
-                <li><a href="javascript:isLoggedIn()">Is Logged In?</a></li>
+                <li><a href="#" id="loginBtn">Login</a></li>
+                <li><a href="#" id="discardTokenBtn">Discard Token</a></li>
+                <li><a href="#" id="isLoggedInBtn">Is Logged In?</a></li>
             </ul>
         </div>
     </div>
@@ -29,11 +29,11 @@
 
     <div class="row">
         <div class="col-xs-12 col-sm-4">
-            <p><button type="button" class="btn btn-default" onclick="query()"><i class="glyphicon glyphicon-refresh"></i> Get Contacts</button></p>
-            <ul id="list" class="list-group"></ul>
+            <p><button type="button" class="btn btn-default" id="queryBtn"><i class="glyphicon glyphicon-refresh"></i> Get Contacts</button></p>
+            <ul id="contactList" class="list-group"></ul>
         </div>
         <div class="col-xs-12 col-sm-8">
-            <p><button type="button" class="btn btn-default" onclick="newContact()"><i class="glyphicon glyphicon-plus"></i> New</button></p>
+            <p><button type="button" class="btn btn-default" id="newBtn"><i class="glyphicon glyphicon-plus"></i> New</button></p>
             <form role="form">
                 <div class="form-group">
                     <label for="contactId">Id</label>
@@ -47,160 +47,15 @@
                     <label for="lastName">Last Name</label>
                     <input type="text" class="form-control" id="lastName">
                 </div>
-                <button type="button" class="btn btn-default" id="createBtn" onclick="create()" style="display:none">Create</button>
-                <button type="button" class="btn btn-default" id="updateBtn" onclick="update()" style="display:none">Update</button>
-                <button type="button" class="btn btn-default" id="deleteBtn" onclick="del()" style="display:none">Delete</button>
+                <button type="button" class="btn btn-default" id="createBtn" style="display:none">Create</button>
+                <button type="button" class="btn btn-default" id="updateBtn" style="display:none">Update</button>
+                <button type="button" class="btn btn-default" id="deleteBtn" style="display:none">Delete</button>
             </form>
         </div>
     </div>
 
 </div>
 
-<script src="force.js"></script>
-<script>
-
-    var contactList = document.getElementById('contact-list'),
-        idField = document.getElementById('contactId'),
-        firstNameField = document.getElementById('firstName'),
-        lastNameField = document.getElementById('lastName'),
-        createBtn = document.getElementById('createBtn'),
-        updateBtn = document.getElementById('updateBtn'),
-        deleteBtn = document.getElementById('deleteBtn');
-
-
-// ForceJS is built to work out of the box with sensible defaults.
-// Uncomment the force.init() function call below to provide specific runtime parameters
-//    force.init({
-//        appId: '3MVG9fMtCkV6eLheIEZplMqWfnGlf3Y.BcWdOf1qytXo9zxgbsrUbS.ExHTgUPJeb3jZeT8NYhc.hMyznKU92',
-//        apiVersion: 'v32.0',
-//        loginUrl: 'https://login.salesforce.com',
-//        oauthRedirectURL: 'http://localhost:8200/oauthcallback.html',
-//        proxyURL: 'http://localhost:8200'
-//    });
-
-    function login() {
-        force.login(
-            function() {
-                console.log('Salesforce login succeeded');
-            },
-            function(error) {
-                console.log(error);
-                alert('Salesforce login failed');
-            });
-    }
-
-    function query() {
-
-        // Empty list
-        list.innerHTML = '';
-
-        // Retrieve contacts
-        force.query('select id, firstName, lastName from contact LIMIT 50',
-            function(response) {
-                var str = '';
-                var contacts = response.records;
-                for (var i=0; i < contacts.length; i++) {
-                    str += '<a href="#' + contacts[i].Id + '" class="list-group-item">' + contacts[i].FirstName + ' '
-                            + contacts[i].LastName + '</a>';
-                }
-                list.innerHTML = str;
-            },
-            function(error) {
-                alert("An error has occurred. See console for details.");
-            });
-    }
-
-    function request() {
-
-        // Empty list
-        list.innerHTML = '';
-
-        // Retrieve contacts
-        force.request({path: '/services/apexrest/contact',
-            success: function(response) {
-                console.log('request');
-                var str = '';
-                var contacts = response;
-                for (var i=0; i < contacts.length; i++) {
-                    str += '<li><a href="#' + contacts[i].Id + '" class="list-group-item">' + contacts[i].Name + '</a></li>';
-                }
-                list.innerHTML = str;
-            },
-            error: function(error) {
-                alert("An error has occurred. See console for details.");
-            }});
-    }
-
-    function create() {
-        force.create('contact', {FirstName: firstNameField.value, LastName: lastNameField.value},
-            function(response) {
-                console.log(response);
-            },
-            function(error) {
-                alert("An error has occurred. See console for details.");
-            });
-    }
-
-    function update() {
-        force.update('contact', {Id: idField.value, FirstName: firstNameField.value, LastName: lastNameField.value},
-            function(response) {
-                console.log(response);
-            },
-            function(error) {
-                alert("An error has occurred. See console for details.");
-            });
-    }
-
-    function del() {
-        force.del('contact', idField.value,
-                function(response) {
-                    console.log(response);
-                },
-                function(error) {
-                    alert("An error has occurred. See console for details.");
-                });
-    }
-
-    function retrieve(id) {
-        force.retrieve('contact', id, null,
-                function(contact) {
-                    console.log(contact);
-                    idField.value = contact.Id;
-                    firstNameField.value = contact.FirstName;
-                    lastNameField.value = contact.LastName;
-                    createBtn.style.display = 'none';
-                    updateBtn.style.display = 'inline';
-                    deleteBtn.style.display = 'inline';
-
-                },
-                function(error) {
-                    alert("An error has occurred. See console for details.");
-                });
-    }
-
-    function discardToken() {
-        force.discardToken();
-        alert('Token discarded');
-    }
-
-    function isLoggedIn() {
-        alert(force.isLoggedIn());
-    }
-
-    function newContact() {
-        idField.value = "";
-        firstNameField.value = "";
-        lastNameField.value = "";
-        createBtn.style.display = 'inline';
-        updateBtn.style.display = 'none';
-        deleteBtn.style.display = 'none';
-    }
-
-    window.onhashchange = function () {
-        var id = window.location.hash.substr(1);
-        retrieve(id);
-    }
-
-</script>
+<script src="bundle.js"></script>
 </body>
 </html>

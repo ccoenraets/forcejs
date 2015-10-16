@@ -1,0 +1,25 @@
+{
+  "name": "forcejs",
+  "version": "0.7.0",
+  "description": "Salesforce REST SDK",
+  "main": "app.js",
+  "scripts": {
+    "build-app": "browserify app.js -t babelify -o bundle.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ccoenraets/forcejs.git"
+  },
+  "author": "Christophe Coenraets <ccoenraets@gmail.com> (http://coenraets.org/)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ccoenraets/forcejs/issues"
+  },
+  "homepage": "https://github.com/ccoenraets/forcejs#readme",
+  "devDependencies": {
+    "babel": "^5.8.23",
+    "babelify": "^6.3.0",
+    "browserify": "^11.2.0"
+  }
+}
