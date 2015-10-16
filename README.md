@@ -1,7 +1,7 @@
 # ForceJS -- ECMAScript 6 Version
 
 ### Salesforce REST SDK
- 
+
 ForceJS is a micro-library that makes it easy to use the Salesforce REST APIs in JavaScript applications.
 ForceJS allows you to easily login to Salesforce using OAuth, and to manipulate your Salesforce data using a simple
 API.
@@ -13,7 +13,7 @@ The main target for ForceJS are applications running on your own server (Heroku 
 ## ES6 branch
 
 This branch is where the ECMAScript 6 version of ForceJS is being developed. Key characteristics of this version:
- 
+
 - ForceJS is now loaded as an ES6 module
 - Use of ES6 promises instead of callbacks.   
 
@@ -55,7 +55,7 @@ ForceJS abstracts these differences and allows you to run your app in the browse
     ```
     sudo npm install -g force-server
     ```
-    
+
 1. Open a command prompt and clone this repository
 
     ```
@@ -63,7 +63,7 @@ ForceJS abstracts these differences and allows you to run your app in the browse
     ```
 
 1. Navigate to the **forcejs** directory
- 
+
 1. Switch ot the **es6** branch
 
     ```
@@ -75,21 +75,21 @@ ForceJS abstracts these differences and allows you to run your app in the browse
     ```
     npm install
     ```
-    
+
 1. Type the following command to build the client application:
 
     ```
-    npm run build-client
+    npm run build-app
     ```
-    
+
 1. Type the following command to start force-server:
 
     ```
     force-server
     ```
 
-    This starts the ForceServer server on port 8200 and loads the sample app in your default browser 
-    
+    This starts the ForceServer server on port 8200 and loads the sample app in your default browser
+
 1. Click the **Login** button and authenticate against tour Salesforce org
 
 1. Click the **Get Contacts** button to load the list of contacts
@@ -120,16 +120,16 @@ Parameters:
 
 - **proxyURL**
 
-    The URL of the CORS proxy server. This parameter is ignored when the app is running in Cordova or inside a Visualforce page. 
-    
+    The URL of the CORS proxy server. This parameter is ignored when the app is running in Cordova or inside a Visualforce page.
+
     *Default*: The base URL the application was loaded from. For example, if you load the app from http://localhost:8200, the default proxyURL is http://localhost:8200. If you load the app from https://myserver.com/myapp, the default proxyURL is https://myserver.com/myapp
 
 - **useProxy**
 
-    *Default*: **false** if the app is running in Cordova or in a Visualforce page, **true** if it's not 
+    *Default*: **false** if the app is running in Cordova or in a Visualforce page, **true** if it's not
 
     By default, ForceJS will automatically determine if it needs to use a CORS proxy: It won't use a proxy if the app is running inside a Visualforce page or a Cordova app, and will use the proxy in any other case. You can force ForceJS to always use a proxy by setting this value to true.
-    
+
     Starting in the Spring 15 release, some Salesforce REST APIs (like Chatter and sobjects) support CORS. To allow an app to make direct REST calls against your org, register the app domain in Setup: Administer > Security Controls > CORS. If you whitelist your domain and use APIs that support CORS, you can set useProxy to false.
 
 - **loginURL**
@@ -316,20 +316,20 @@ Parameters:
     The HTTP method to execute: GET, POST, PUT, DELETE, PATCH
 
     *Default*: GET
-    
+
 - **contentType**     
 
     The request content type.
 
 
 - **params**
-    
+
     An object that will be turned into a query string appended to the request URL
-     
+
 - **data**
-     
+
     An object representing data to be sent as the body of the request.
-     
+
 
 ### isAuthenticated()
 
@@ -388,16 +388,16 @@ Parameters:
     The HTTP method to execute: GET, POST, PUT, DELETE, PATCH
 
     *Default*: GET
-    
+
 - **contentType**     
 
     The request content type.
 
 
 - **params**
-    
+
     An object that will be turned into a query string appended to the request URL
-     
+
 - **data**
-     
+
     An object representing data to be sent as the body of the request.
