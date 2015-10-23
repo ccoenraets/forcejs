@@ -1,7 +1,7 @@
 /**
  * ForceJS - REST toolkit for Salesforce.com
  * Author: Christophe Coenraets @ccoenraets
- * Version: 0.7
+ * Version: 0.7.2
  */
 "use strict";
 
@@ -16,7 +16,7 @@ let // The login URL for the OAuth process
 
     // The force.com API version to use.
     // To override default, pass apiVersion in init(props)
-    apiVersion = 'v33.0',
+    apiVersion = 'v35.0',
 
     // Keep track of OAuth data (access_token, refresh_token, and instance_url)
     oauth,
@@ -161,6 +161,12 @@ let refreshToken = () => {
         return refreshTokenWithHTTPRequest();
     }
 };
+
+let joinPaths = (path1, path2) => {
+    if (path1.charAt(path1.length - 1) !== '/') path1 = path1 + "/";
+    if (path2.charAt(0) === '/') path2 = path2.substr(1);
+    return path1 + path2;
+}
 
 /**
  * Initialize ForceJS
@@ -485,19 +491,19 @@ export let apexrest = pathOrParams => {
  * Convenience function to invoke the Chatter API
  * @param pathOrParams
  */
-export let chatter = params => {
+export let chatter = pathOrParams => {
 
-    let base = "/services/data/" + apiVersion + "/chatter";
+    let basePath = "/services/data/" + apiVersion + "/chatter";
+    let params;
 
-    if (!params || !params.path) {
+    if (pathOrParams && pathOrParams.substring) {
+        params = {path: joinPaths(basePath, pathOrParams)};
+    } else if (pathOrParams && pathOrParams.path) {
+        params = pathOrParams;
+        params.path = joinPaths(basePath, pathOrParams.path);
+    } else {
         return new Promise((resolve, reject) => reject("You must specify a path for the request"));
     }
-
-    if (params.path.charAt(0) !== "/") {
-        params.path = "/" + params.path;
-    }
-
-    params.path = base + params.path;
 
     return request(params);
 
