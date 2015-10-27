@@ -180,7 +180,7 @@ let joinPaths = (path1, path2) => {
  *  instanceURL (optional)
  *  refreshToken (optional)
  */
-export let init = params => {
+export let init = (params) => new Promise((resolve, reject) => {
 
     if (params) {
         appId = params.appId || appId;
@@ -189,7 +189,8 @@ export let init = params => {
         oauthCallbackURL = params.oauthCallbackURL || oauthCallbackURL;
         proxyURL = params.proxyURL || proxyURL;
         useProxy = params.useProxy === undefined ? useProxy : params.useProxy;
-
+        tokenStore = params.tokenStore || tokenStore;
+        
         if (params.accessToken) {
             if (!oauth) oauth = {};
             oauth.access_token = params.accessToken;
@@ -207,8 +208,8 @@ export let init = params => {
     }
 
     console.log("useProxy: " + useProxy);
-
-};
+    resolve();
+});
 
 /**
  * Discard the OAuth access_token. Use this function to test the refresh token workflow.
