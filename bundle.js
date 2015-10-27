@@ -31,11 +31,6 @@ var list = document.getElementById('contactList'),
 //        proxyURL: 'http://localhost:8200'
 //    });
 
-force.init({
-    useProxy: false,
-    proxyURL: "https://dev-cors-proxy.herokuapp.com/"
-});
-
 var errorHandler = function errorHandler(error) {
     return alert('An error has occurred\n' + (error[0].message || error));
 };
@@ -133,7 +128,7 @@ deleteBtn.addEventListener("click", del);
 /**
  * ForceJS - REST toolkit for Salesforce.com
  * Author: Christophe Coenraets @ccoenraets
- * Version: 0.7
+ * Version: 0.7.2
  */
 "use strict";
 
@@ -292,6 +287,12 @@ var refreshToken = function refreshToken() {
     }
 };
 
+var joinPaths = function joinPaths(path1, path2) {
+    if (path1.charAt(path1.length - 1) !== '/') path1 = path1 + "/";
+    if (path2.charAt(0) === '/') path2 = path2.substr(1);
+    return path1 + path2;
+};
+
 /**
  * Initialize ForceJS
  * @param params
@@ -426,6 +427,15 @@ var getUserId = function getUserId() {
 };
 
 exports.getUserId = getUserId;
+/**
+ * Gets the access token (if logged in)
+ * @returns {string} | undefined
+ */
+var getAccessToken = function getAccessToken() {
+    return oauth ? oauth.access_token : undefined;
+};
+
+exports.getAccessToken = getAccessToken;
 /**
  * Check the login status
  * @returns {boolean}
@@ -639,12 +649,6 @@ var apexrest = function apexrest(pathOrParams) {
 };
 
 exports.apexrest = apexrest;
-var joinPaths = function joinPaths(path1, path2) {
-    if (path1.charAt(path1.length - 1) !== '/') path1 = path1 + "/";
-    if (path2.charAt(0) === '/') path2 = path2.substr(1);
-    return path1 + path2;
-};
-
 /**
  * Convenience function to invoke the Chatter API
  * @param pathOrParams

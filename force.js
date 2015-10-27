@@ -297,6 +297,12 @@ export let loginWithBrowser = () => new Promise((resolve, reject) => {
 export let getUserId = () => (typeof(oauth) !== 'undefined') ? oauth.id.split('/').pop() : undefined;
 
 /**
+ * Gets the access token (if logged in)
+ * @returns {string} | undefined
+ */
+export let getAccessToken = () => (oauth) ? oauth.access_token : undefined;
+
+/**
  * Check the login status
  * @returns {boolean}
  */
