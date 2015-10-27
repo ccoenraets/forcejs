@@ -1,6 +1,6 @@
 {
   "name": "forcejs",
-  "version": "0.7.3",
+  "version": "0.7.4",
   "description": "Salesforce REST SDK",
   "main": "lib/force.js",
   "scripts": {

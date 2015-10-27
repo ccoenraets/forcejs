@@ -297,10 +297,9 @@ export let loginWithBrowser = () => new Promise((resolve, reject) => {
 export let getUserId = () => (typeof(oauth) !== 'undefined') ? oauth.id.split('/').pop() : undefined;
 
 /**
- * Gets the access token (if logged in)
- * @returns {string} | undefined
+ * Get the OAuth data returned by the Salesforce login process
  */
-export let getAccessToken = () => (oauth) ? oauth.access_token : undefined;
+export let getOAuthResult = () => oauth;
 
 /**
  * Check the login status

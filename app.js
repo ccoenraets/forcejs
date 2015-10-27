@@ -30,7 +30,10 @@ let errorHandler = error => alert(`An error has occurred\n${error[0].message || 
 let login = event => {
     event.preventDefault();
     force.login()
-        .then(() => alert('Salesforce login succeeded'))
+        .then(() => {
+            console.log(force.getOAuthResult());
+            alert('Salesforce login succeeded')
+        })
         .catch(() => alert('Salesforce login failed'));
 };
 

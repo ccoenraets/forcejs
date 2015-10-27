@@ -38,7 +38,8 @@ var errorHandler = function errorHandler(error) {
 var login = function login(event) {
     event.preventDefault();
     force.login().then(function () {
-        return alert('Salesforce login succeeded');
+        console.log(force.getOAuthResult());
+        alert('Salesforce login succeeded');
     })['catch'](function () {
         return alert('Salesforce login failed');
     });
@@ -428,14 +429,13 @@ var getUserId = function getUserId() {
 
 exports.getUserId = getUserId;
 /**
- * Gets the access token (if logged in)
- * @returns {string} | undefined
+ * Get the OAuth data returned by the Salesforce login process
  */
-var getAccessToken = function getAccessToken() {
-    return oauth ? oauth.access_token : undefined;
+var getOAuthResult = function getOAuthResult() {
+    return oauth;
 };
 
-exports.getAccessToken = getAccessToken;
+exports.getOAuthResult = getOAuthResult;
 /**
  * Check the login status
  * @returns {boolean}
