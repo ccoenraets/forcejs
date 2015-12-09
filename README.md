@@ -10,7 +10,7 @@ API.
 
 ForceJS is similar to [ForceTK](https://github.com/developerforce/Force.com-JavaScript-REST-Toolkit), but has no jQuery dependency and comes with an AngularJS version ([ForceNG](https://github.com/ccoenraets/forceng)).
 
-The main target for ForceJS are applications running on your own server (Heroku or elsewhere) and Cordova/Mobile SDK applications.  
+The main target for ForceJS are applications running on your own server (Heroku or elsewhere) and Cordova/Mobile SDK applications.
 
 ## Browser and Cordova without Code Changes
 
@@ -88,7 +88,7 @@ To create and run a minimalistic sample app using ForceJS:
     force-server
     ```
 
-    This starts the ForceServer server on port 8200 and loads your sample app in your default browser. After authenticating against your developer org, you should see a list of contacts.  
+    This starts the ForceServer server on port 8200 and loads your sample app in your default browser. After authenticating against your developer org, you should see a list of contacts.
 
 > Starting in the Spring 15 release, some Salesforce REST APIs (like Chatter and sobjects) support CORS. To allow an app to make direct REST calls against your org, register the app domain in Setup: Administer > Security Controls > CORS.
 
@@ -162,7 +162,7 @@ To run the same application in Cordova:
     cordova build ios
     ```
 
-Run the project. For example, for iOS, open the project (platforms/ios/contactforce.xcodeproj) in Xcode and run it in the emulator or on your iOS device. After authenticating against your developer org, you should see a list of contacts.  
+Run the project. For example, for iOS, open the project (platforms/ios/contactforce.xcodeproj) in Xcode and run it in the emulator or on your iOS device. After authenticating against your developer org, you should see a list of contacts.
 
 > Note that you didn't change any code to run the app in Cordova. When running in Cordova, ForceJS automatically uses the Salesforce Mobile SDK OAuth plugin, and invokes REST services without using a proxy because the webview used in Cordova is not subject to the same cross domain policy restrictions.
 
@@ -423,7 +423,7 @@ Parameters:
 
     *Default*: GET
 
-- **contentType**     
+- **contentType**
 
     The request content type.
 
@@ -477,7 +477,7 @@ Example:
 force.chatter({path: "/users/me"},
     function(result) {
         console.log(result)
-    ),
+    },
     function(error) {
         console.log(error);
     });
@@ -495,7 +495,66 @@ Parameters:
 
     *Default*: GET
 
-- **contentType**     
+- **contentType**
+
+    The request content type.
+
+
+- **params**
+
+    An object that will be turned into a query string appended to the request URL
+
+- **data**
+
+    An object representing data to be sent as the body of the request.
+
+### actions()
+
+A convenience function to use the Actions API
+
+Example:
+
+```
+force.actions({
+      method: 'POST',
+      contentType: 'application/json',
+      path: '/custom/apex/SomeClassWithInvocableMethod',
+      data: {inputs: [{"your": "data"}]}
+    },
+    function(result) {
+        console.log(result)
+    },
+    function(error) {
+        console.log(error);
+    });
+```
+force.actions({
+      method: 'POST',
+      contentType: 'application/json',
+      path: '/standard/emailSimple',
+      data: {"inputs":[{"emailAddresses":"test@test.com", "emailSubject":"test", "emailBody": "Test"}]}]}
+    },
+    function(result) {
+        console.log(result)
+    },
+    function(error) {
+        console.log(error);
+    });
+```
+
+Parameters:
+
+- **path**
+
+    The path of the Actions API service to invoke
+
+- **method**
+
+    The HTTP method to execute: GET, POST, PUT, DELETE, PATCH
+
+    *Default*: GET
+
+- **contentType**
 
     The request content type.
 
@@ -523,7 +582,7 @@ ForceJS was built based on the following requirements:
 - Full OAuth workflow
 - Browser and Cordova-based execution without code or configuration changes
 
-Depending on your own requirements, you should also consider the following libraries:  
+Depending on your own requirements, you should also consider the following libraries:
 
 - [ForceTK](https://github.com/developerforce/Force.com-JavaScript-REST-Toolkit): Proven toolkit for Salesforce REST APIs. Leverages jQuery.
 - [NForce](https://github.com/kevinohara80/nforce): node.js REST API wrapper for force.com, database.com, and salesforce.com.
