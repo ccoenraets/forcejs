@@ -18,7 +18,7 @@ var force = (function () {
 
     // The force.com API version to use.
     // To override default, pass apiVersion in init(props)
-        apiVersion = 'v33.0',
+        apiVersion = 'v35.0',
 
     // Keep track of OAuth data (access_token, refresh_token, and instance_url)
         oauth,
@@ -432,10 +432,10 @@ var force = (function () {
         );
 
     }
-    
+
     /**
      * Convenience function to retrieve an attachment
-     * @param id 
+     * @param id
      * @param successHandler
      * @param errorHandler
      */
@@ -464,7 +464,7 @@ var force = (function () {
             errorHandler
         );
     }
-    
+
 
     /**
      * Convenience function to create a new record
@@ -609,6 +609,35 @@ var force = (function () {
 
     }
 
+    /**
+     * Convenience function to invoke the Actions API
+     * @param params
+     * @param successHandler
+     * @param errorHandler
+     */
+    function actions(params, successHandler, errorHandler) {
+
+        var base = "/services/data/" + apiVersion + "/actions";
+
+        if (!params || !params.path) {
+            errorHandler("You must specify a path for the request");
+            return;
+        }
+
+        if (params.path.charAt(0) !== "/") {
+            params.path = "/" + params.path;
+        }
+
+        if (params.path.search(/^\/(standard|custom)/) === -1) {
+            errorHandler("The Action path must point to either a standard or custom action");
+            return;
+        }
+
+        params.path = base + params.path;
+
+        request(params, successHandler, errorHandler);
+    }
+
     // The public API
     return {
         init: init,
@@ -624,6 +653,7 @@ var force = (function () {
         retrieve: retrieve,
         apexrest: apexrest,
         chatter: chatter,
+        actions: actions,
         discardToken: discardToken,
         oauthCallback: oauthCallback,
         getPickListValues: getPickListValues,
