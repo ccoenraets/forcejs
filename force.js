@@ -49,8 +49,7 @@ let // The login URL for the OAuth process
     useProxy = (window.cordova || window.SfdcApp || window.sforce) ? false : true,
     
     //Additional login window URL parameters for customizing the desktop login experience
-    loginURLParameters = {}
-    ;
+    loginURLParameters = {};
 
 /*
  * Determines the request base URL.
