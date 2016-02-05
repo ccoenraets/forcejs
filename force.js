@@ -46,7 +46,11 @@ let // The login URL for the OAuth process
 
     // Whether or not to use a CORS proxy. Defaults to false if app running in Cordova, in a VF page,
     // or using the Salesforce console. Can be overriden in init()
-    useProxy = (window.cordova || window.SfdcApp || window.sforce) ? false : true;
+    useProxy = (window.cordova || window.SfdcApp || window.sforce) ? false : true,
+    
+    //Additional login window URL parameters for customizing the desktop login experience
+    loginURLParameters = {}
+    ;
 
 /*
  * Determines the request base URL.
@@ -261,7 +265,7 @@ export let loginWithBrowser = () => new Promise((resolve, reject) => {
     console.log('loginURL: ' + loginURL);
     console.log('oauthCallbackURL: ' + oauthCallbackURL);
 
-    let loginWindowURL = loginURL + '/services/oauth2/authorize?client_id=' + appId + '&redirect_uri=' + oauthCallbackURL + '&response_type=token';
+    let loginWindowURL = loginURL + '/services/oauth2/authorize?client_id=' + appId + '&redirect_uri=' + oauthCallbackURL + '&response_type=token' + toQueryString(loginURLParams);
 
     document.addEventListener("oauthCallback", (event) => {
 
