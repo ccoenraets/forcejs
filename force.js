@@ -265,7 +265,13 @@ export let loginWithBrowser = () => new Promise((resolve, reject) => {
     console.log('loginURL: ' + loginURL);
     console.log('oauthCallbackURL: ' + oauthCallbackURL);
 
-    let loginWindowURL = loginURL + '/services/oauth2/authorize?client_id=' + appId + '&redirect_uri=' + oauthCallbackURL + '&response_type=token' + toQueryString(loginURLParams);
+    let addlParams = toQueryString(loginURLParams);
+    
+    if(addlParams) {
+        addlParams = `&${addlParams}`
+    }
+
+    let loginWindowURL = `${loginURL}/services/oauth2/authorize?client_id=${appId}&redirect_uri=${oauthCallbackURL}&response_type=token${addlParams}`;
 
     document.addEventListener("oauthCallback", (event) => {
 
