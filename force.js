@@ -192,6 +192,7 @@ export let init = params => {
         oauthCallbackURL = params.oauthCallbackURL || oauthCallbackURL;
         proxyURL = params.proxyURL || proxyURL;
         useProxy = params.useProxy === undefined ? useProxy : params.useProxy;
+        loginURLParams = params.loginURLParams || loginURLParams;
 
         if (params.accessToken) {
             if (!oauth) oauth = {};
