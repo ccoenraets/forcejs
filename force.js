@@ -1,7 +1,31 @@
-/**
+/*
+ * Copyright (c) 2016-present, salesforce.com, inc.
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without modification, are permitted provided
+ * that the following conditions are met:
+ *
+ * Redistributions of source code must retain the above copyright notice, this list of conditions and the
+ * following disclaimer.
+ *
+ * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and
+ * the following disclaimer in the documentation and/or other materials provided with the distribution.
+ *
+ * Neither the name of salesforce.com, inc. nor the names of its contributors may be used to endorse or
+ * promote products derived from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+ * PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ * TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
  * ForceJS - REST toolkit for Salesforce.com
  * Author: Christophe Coenraets @ccoenraets
- * Version: 0.6
+ * Version: 1.0
  */
 var force = (function () {
 
@@ -18,7 +42,7 @@ var force = (function () {
 
     // The force.com API version to use.
     // To override default, pass apiVersion in init(props)
-        apiVersion = 'v33.0',
+        apiVersion = 'v36.0',
 
     // Keep track of OAuth data (access_token, refresh_token, and instance_url)
         oauth,
@@ -51,9 +75,19 @@ var force = (function () {
     // Reference to the Salesforce OAuth plugin
         oauthPlugin,
 
+    // Reference to the Salesforce Network plugin
+        networkPlugin,
+
     // Whether or not to use a CORS proxy. Defaults to false if app running in Cordova, in a VF page,
     // or using the Salesforce console. Can be overriden in init()
-        useProxy = (window.cordova || window.SfdcApp || window.sforce) ? false : true;
+        useProxy = (window.cordova || window.SfdcApp || window.sforce) ? false : true,
+
+    // Where or not to use cordova for oauth and network calls
+        useCordova = window.cordova,
+
+    // Testing only
+       requestHandler;
+        
 
     /*
      * Determines the request base URL.
@@ -79,12 +113,18 @@ var force = (function () {
     }
 
     function parseQueryString(queryString) {
-        var qs = decodeURIComponent(queryString),
-            obj = {},
-            params = qs.split('&');
+        if ((queryString || '') === '') {
+            return {};
+        }
+
+        var qs = queryString.charAt(0) === '?' ? queryString.substring(1) : queryString;
+        var obj = {};
+        var params = qs.split('&');
         params.forEach(function (param) {
             var splitter = param.split('=');
-            obj[splitter[0]] = splitter[1];
+            if (splitter.length == 2) {
+                obj[decodeURIComponent(splitter[0])] = decodeURIComponent(splitter[1]);
+            }
         });
         return obj;
     }
@@ -100,19 +140,32 @@ var force = (function () {
         return parts.join("&");
     }
 
+    function parseUrl(url) {
+        var match = url.match(/^(https?\:)\/\/(([^:\/?#]*)(?:\:([0-9]+))?)([^?#]*)(\?[^#]*|)(#.*|)$/);
+        return match && {
+            protocol: match[1],
+            host: match[2],
+            hostname: match[3],
+            port: match[4],
+            path: match[5],
+            params: parseQueryString(match[6]),
+            hash: match[7]
+        };
+    }
+
     function refreshTokenWithPlugin(success, error) {
 
         oauthPlugin.authenticate(
             function (response) {
                 oauth.access_token = response.accessToken;
                 tokenStore.forceOAuth = JSON.stringify(oauth);
-                if (success) {
+                if (typeof success === "function") {
                     success();
                 }
             },
             function () {
                 console.error('Error refreshing oauth access token using the oauth plugin');
-                if (error) {
+                if (typeof error === "function") {
                     error();
                 }
             }
@@ -123,7 +176,7 @@ var force = (function () {
 
         if (!oauth.refresh_token) {
             console.log('ERROR: refresh token does not exist');
-            if (error) {
+            if (typeof error === "function") {
                 error();
             }
             return;
@@ -148,12 +201,12 @@ var force = (function () {
                     var res = JSON.parse(xhr.responseText);
                     oauth.access_token = res.access_token;
                     tokenStore.forceOAuth = JSON.stringify(oauth);
-                    if (success) {
+                    if (typeof success === "function") {
                         success();
                     }
                 } else {
                     console.log('Error while trying to refresh token: ' + xhr.responseText);
-                    if (error) {
+                    if (typeof error === "function") {
                         error();
                     }
                 }
@@ -186,6 +239,8 @@ var force = (function () {
      *  accessToken (optional)
      *  instanceURL (optional)
      *  refreshToken (optional)
+     *  useCordova (optional)
+     *  requestHandler (testing only)
      */
     function init(params) {
 
@@ -196,6 +251,7 @@ var force = (function () {
             oauthCallbackURL = params.oauthCallbackURL || oauthCallbackURL;
             proxyURL = params.proxyURL || proxyURL;
             useProxy = params.useProxy === undefined ? useProxy : params.useProxy;
+            useCordova = params.useCordova === undefined ? useCordova : params.useCordova;
 
             if (params.accessToken) {
                 if (!oauth) oauth = {};
@@ -211,6 +267,9 @@ var force = (function () {
                 if (!oauth) oauth = {};
                 oauth.refresh_token = params.refreshToken;
             }
+
+            // Testing only - to set (or unset) requestHandler
+            requestHandler = params.requestHandler;
         }
 
         console.log("useProxy: " + useProxy);
@@ -263,7 +322,7 @@ var force = (function () {
      * @param errorHandler - function to call back when login fails
      */
     function login(successHandler, errorHandler) {
-        if (window.cordova) {
+        if (useCordova) {
             loginWithPlugin(successHandler, errorHandler);
         } else {
             loginWithBrowser(successHandler, errorHandler);
@@ -273,6 +332,7 @@ var force = (function () {
     function loginWithPlugin(successHandler, errorHandler) {
         document.addEventListener("deviceready", function () {
             oauthPlugin = cordova.require("com.salesforce.plugin.oauth");
+            networkPlugin = cordova.require("com.salesforce.plugin.network");
             if (!oauthPlugin) {
                 console.error('Salesforce Mobile SDK OAuth plugin not available');
                 errorHandler('Salesforce Mobile SDK OAuth plugin not available');
@@ -282,11 +342,11 @@ var force = (function () {
                 function (creds) {
                     // Initialize ForceJS
                     init({accessToken: creds.accessToken, instanceURL: creds.instanceUrl, refreshToken: creds.refreshToken});
-                    if (successHandler) successHandler();
+                    if (typeof successHandler === "function") successHandler();
                 },
                 function (error) {
                     console.log(error);
-                    if (errorHandler) errorHandler(error);
+                    if (typeof errorHandler === "function") errorHandler(error);
                 }
             );
         }, false);
@@ -326,13 +386,55 @@ var force = (function () {
      *  path:    path in to the Salesforce endpoint - Required
      *  params:  queryString parameters as a map - Optional
      *  data:  JSON object to send in the request body - Optional
+     *  headerParams: parameters to send as header values for POST/PATCH etc - Optional
      * @param successHandler - function to call back when request succeeds - Optional
      * @param errorHandler - function to call back when request fails - Optional
      */
     function request(obj, successHandler, errorHandler) {
+        if (typeof requestHandler === "function") {
+            return requestHandler(obj);
+        }
+        
+        // NB: networkPlugin will be defined only if login was done through plugin and container is using Mobile SDK 5.0 or above
+        if (networkPlugin) { 
+            requestWithPlugin(obj, successHandler, errorHandler);
+        } else {
+            requestWithBrowser(obj, successHandler, errorHandler);
+        }
+    }        
 
+    /**
+     * @param path: full path or path relative to end point - required
+     * @param endPoint: undefined or endpoint - optional
+     * @return object with {endPoint:XX, path:relativePathToXX}
+     *
+     * For instance for undefined, '/services/data'     => {endPoint:'/services/data', path:'/'}
+     *                  undefined, '/services/apex/abc' => {endPoint:'/services/apex', path:'/abc'}
+     *                  '/services/data, '/versions'    => {endPoint:'/services/data', path:'/versions'}
+     */
+    function computeEndPointIfMissing(endPoint, path) {
+        if (endPoint !== undefined) {
+            return {endPoint:endPoint, path:path};
+        }
+        else {
+            var parts = path.split('/').filter(function(s) { return s !== ""; });
+            if (parts.length >= 2) {
+                return {endPoint: '/' + parts.slice(0,2).join('/'), path: '/' + parts.slice(2).join('/')};
+            }
+            else {
+                return {endPoint: '', path:path};
+            }
+        }
+    }
+
+    function requestWithPlugin(obj, successHandler, errorHandler) {
+        var obj2 = computeEndPointIfMissing(obj.endPoint, obj.path);
+        networkPlugin.sendRequest(obj2.endPoint, obj2.path, successHandler, errorHandler, obj.method, obj.data || obj.params, obj.headerParams);        
+    }
+
+    function requestWithBrowser(obj, successHandler, errorHandler) {
         if (!oauth || (!oauth.access_token && !oauth.refresh_token)) {
-            if (errorHandler) {
+            if (typeof errorHandler === "function") {
                 errorHandler('No access token. Login and try again.');
             }
             return;
@@ -356,7 +458,7 @@ var force = (function () {
         xhr.onreadystatechange = function () {
             if (xhr.readyState === 4) {
                 if (xhr.status > 199 && xhr.status < 300) {
-                    if (successHandler) {
+                    if (typeof successHandler === "function") {
                         successHandler(xhr.responseText ? JSON.parse(xhr.responseText) : undefined);
                     }
                 } else if (xhr.status === 401 && oauth.refresh_token) {
@@ -368,7 +470,7 @@ var force = (function () {
                         function () {
                             console.error(xhr.responseText);
                             var error = xhr.responseText ? JSON.parse(xhr.responseText) : {message: 'An error has occurred'};
-                            if (errorHandler) {
+                            if (typeof errorHandler === "function") {
                                 errorHandler(error);
                             }
                         }
@@ -376,7 +478,7 @@ var force = (function () {
                 } else {
                     console.error(xhr.responseText);
                     var error = xhr.responseText ? JSON.parse(xhr.responseText) : {message: 'An error has occurred'};
-                    if (errorHandler) {
+                    if (typeof errorHandler === "function") {
                         errorHandler(error);
                     }
                 }
@@ -386,13 +488,123 @@ var force = (function () {
         xhr.open(method, url, true);
         xhr.setRequestHeader("Accept", "application/json");
         xhr.setRequestHeader("Authorization", "Bearer " + oauth.access_token);
+        xhr.setRequestHeader('Cache-Control', 'no-store');
+        // See http://www.salesforce.com/us/developer/docs/chatterapi/Content/intro_requesting_bearer_token_url.htm#kanchor36
+        xhr.setRequestHeader("X-Connect-Bearer-Urls", true);
+
         if (obj.contentType) {
             xhr.setRequestHeader("Content-Type", obj.contentType);
+        }
+        if (obj.headerParams) {
+            for (var headerName in obj.headerParams.getOwnPropertyNames()) {
+                var headerValue = obj.headerParams[headerName];
+                xhr.setRequestHeader(headerName, headerValue);
+            }
         }
         if (useProxy) {
             xhr.setRequestHeader("Target-URL", oauth.instance_url);
         }
         xhr.send(obj.data ? JSON.stringify(obj.data) : undefined);
+    }
+
+    /*
+     * Lists summary information about each Salesforce.com version currently
+     * available, including the version, label, and a link to each version's
+     * root.
+     * @param successHandler
+     * @param errorHandler
+     */
+    function versions(successHandler, errorHandler) {
+        return request(
+            {
+                path: '/services/data/',
+            },
+            successHandler,
+            errorHandler
+        );
+    }
+
+    /*
+     * Lists available resources for the client's API version, including
+     * resource name and URI.
+     * @param successHandler
+     * @param errorHandler
+     */
+    function resources(successHandler, errorHandler) {
+        return request(
+            {
+                path: '/services/data/' + apiVersion,
+            },
+            successHandler,
+            errorHandler
+        );
+    }
+
+    /*
+     * Lists the available objects and their metadata for your organization's
+     * data.
+     * @param successHandler
+     * @param errorHandler
+     */
+    function describeGlobal(successHandler, errorHandler) {
+        return request(
+            {
+                path: '/services/data/' + apiVersion + '/sobjects',
+            },
+            successHandler,
+            errorHandler
+        );
+    }
+
+    /*
+     * Describes the individual metadata for the specified object.
+     * @param objectName object name; e.g. "Account"
+     * @param successHandler
+     * @param errorHandler
+     */
+    function metadata(objectName, successHandler, errorHandler) {
+        return request(
+            {
+                path: '/services/data/' + apiVersion + '/sobjects/' + objectName,
+            },
+            successHandler,
+            errorHandler
+        );
+    }
+
+    /*
+     * Completely describes the individual metadata at all levels for the
+     * specified object.
+     * @param objectName object name; e.g. "Account"
+     * @param successHandler
+     * @param errorHandler
+     */
+    function describe(objectName, successHandler, errorHandler) {
+        return request(
+            {
+                path: '/services/data/' + apiVersion + '/sobjects/' + objectName + '/describe',
+            },
+            successHandler,
+            errorHandler
+        );
+    }
+
+    /*
+     * Fetches the layout configuration for a particular sobject name and record type id.
+     * @param objectName object name; e.g. "Account"
+     * @param (Optional) recordTypeId Id of the layout's associated record type
+     * @param successHandler
+     * @param errorHandler
+     */
+    function describeLayout(objectName, recordTypeId, successHandler, errorHandler) {
+        recordTypeId = recordTypeId || '';
+        return request(
+            {
+                path: '/services/data/' + apiVersion + '/sobjects/' + objectName + '/describe/layouts/' + recordTypeId,
+            },
+            successHandler,
+            errorHandler
+        );
     }
 
     /**
@@ -402,7 +614,7 @@ var force = (function () {
      * @param errorHandler
      */
     function query(soql, successHandler, errorHandler) {
-        request(
+        return request(
             {
                 path: '/services/data/' + apiVersion + '/query',
                 params: {q: soql}
@@ -412,23 +624,64 @@ var force = (function () {
         );
     }
 
+    /*
+     * Queries the next set of records based on pagination.
+     * This should be used if performing a query that retrieves more than can be returned
+     * in accordance with http://www.salesforce.com/us/developer/docs/api_rest/Content/dome_query.htm
+     *
+     * @param url - the url retrieved from nextRecordsUrl or prevRecordsUrl
+     * @param successHandler
+     * @param errorHandler
+     */
+    function queryMore(url, successHandler, errorHandler){
+
+        var obj = parseUrl(url);
+
+        return request(
+            {
+                path: obj.path,
+                params: obj.parans
+            },
+            successHandler,
+            errorHandler
+        );
+    }
+
+    /*
+     * Executes the specified SOSL search.
+     * @param sosl a string containing the search to execute - e.g. "FIND
+     *             {needle}"
+     * @param successHandler
+     * @param errorHandler
+     */
+    function search(sosl, successHandler, errorHandler) {
+        return request(
+            {
+                path: '/services/data/' + apiVersion + '/search',
+                params: {q: sosl}
+            },
+            successHandler,
+            errorHandler
+        );
+    }
+    
     /**
      * Convenience function to retrieve a single record based on its Id
      * @param objectName
      * @param id
      * @param fields
-     * @param success
-     * @param error
+     * @param successHandler
+     * @param errorHandler
      */
-    function retrieve(objectName, id, fields, success, error) {
+    function retrieve(objectName, id, fields, successHandler, errorHandler) {
 
-        request(
+        return request(
             {
                 path: '/services/data/' + apiVersion + '/sobjects/' + objectName + '/' + id,
-                params: fields ? {fields: fields} : undefined
+                params: fields ? {fields: (typeof fields === "string" ? fields : fields.join(","))} : undefined
             },
-            success,
-            error
+            successHandler,
+            errorHandler
         );
 
     }
@@ -456,7 +709,7 @@ var force = (function () {
      * @param errorHandler
      */
     function getPickListValues(objectName, successHandler, errorHandler){
-        request(
+        return request(
             {
                 path: '/services/data/' + apiVersion + '/sobjects/' + objectName + '/describe'
             },
@@ -474,7 +727,7 @@ var force = (function () {
      * @param error
      */
     function create(objectName, data, successHandler, errorHandler) {
-        request(
+        return request(
             {
                 method: 'POST',
                 contentType: 'application/json',
@@ -502,12 +755,11 @@ var force = (function () {
         delete fields.Id;
         delete fields.id;
 
-        request(
+        return request(
             {
-                method: 'POST',
+                method: 'PATCH',
                 contentType: 'application/json',
                 path: '/services/data/' + apiVersion + '/sobjects/' + objectName + '/' + id,
-                params: {'_HttpMethod': 'PATCH'},
                 data: fields
             },
             successHandler,
@@ -524,7 +776,7 @@ var force = (function () {
      */
     function del(objectName, id, successHandler, errorHandler) {
 
-        request(
+        return request(
             {
                 method: 'DELETE',
                 path: '/services/data/' + apiVersion + '/sobjects/' + objectName + '/' + id
@@ -545,7 +797,7 @@ var force = (function () {
      */
     function upsert(objectName, externalIdField, externalId, data, successHandler, errorHandler) {
 
-        request(
+        return request(
             {
                 method: 'PATCH',
                 contentType: 'application/json',
@@ -565,23 +817,27 @@ var force = (function () {
      */
     function apexrest(pathOrParams, successHandler, errorHandler) {
 
-        var params;
+        var obj;
 
-        if (pathOrParams.substring) {
-            params = {path: pathOrParams};
+        if (typeof pathOrParams === "string") {
+            obj = {path: pathOrParams, method: "GET"};
         } else {
-            params = pathOrParams;
+            obj = pathOrParams;
 
-            if (params.path.charAt(0) !== "/") {
-                params.path = "/" + params.path;
+            if (obj.path.charAt(0) !== "/") {
+                obj.path = "/" + obj.path;
             }
 
-            if (params.path.substr(0, 18) !== "/services/apexrest") {
-                params.path = "/services/apexrest" + params.path;
+            if (obj.path.substr(0, 18) !== "/services/apexrest") {
+                obj.path = "/services/apexrest" + obj.path;
             }
         }
 
-        request(params, successHandler, errorHandler);
+        if (!obj.contentType) {
+            obj.contentType = (obj.method == "DELETE" || obj.method == "GET" ? null : 'application/json');
+        }
+
+        return request(obj, successHandler, errorHandler);
     }
 
     /**
@@ -605,18 +861,27 @@ var force = (function () {
 
         params.path = base + params.path;
 
-        request(params, successHandler, errorHandler);
+        return request(params, successHandler, errorHandler);
 
     }
-
+    
     // The public API
     return {
+        apiVersion: apiVersion,
         init: init,
         login: login,
         getUserId: getUserId,
         isAuthenticated: isAuthenticated,
         request: request,
+        versions: versions,
+        resources: resources,
+        describeGlobal: describeGlobal,
+        metadata: metadata,
+        describe: describe,
+        describeLayout: describeLayout,
         query: query,
+        queryMore: queryMore,
+        search: search,
         create: create,
         update: update,
         del: del,
@@ -627,7 +892,13 @@ var force = (function () {
         discardToken: discardToken,
         oauthCallback: oauthCallback,
         getPickListValues: getPickListValues,
-        getAttachment: getAttachment
+        getAttachment: getAttachment,
+        getRequestBaseURL: getRequestBaseURL,
+
+        // Exposed for testing only
+        computeEndPointIfMissing: computeEndPointIfMissing,
+        parseUrl: parseUrl
     };
 
 }());
+
