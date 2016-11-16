@@ -79,7 +79,7 @@ ForceJS abstracts these differences and allows you to run your app in the browse
 1. Type the following command to install **Webpack** and **Babel**:
 
     ```
-    npm install babel-loader babel-preset-es2015 webpack --save-dev
+    npm install babel-core babel-loader babel-preset-es2015 webpack --save-dev
     ```
 
 1. Using your favorite editor, open `package.json` and modify the `scripts` section as follows:
@@ -100,7 +100,6 @@ ForceJS abstracts these differences and allows you to run your app in the browse
     module.exports = {
         entry: './app.js',
         output: {
-            path: path.resolve(__dirname, 'build'),
             filename: 'app.bundle.js'
         },
         module: {
@@ -124,8 +123,10 @@ ForceJS abstracts these differences and allows you to run your app in the browse
 1. Create a file named `index.html` in your project's root directory:
 
     ```
+    <!DOCTYPE html>
     <html>
     <body>
+        <h1>Forcejs Quick Start</h1>
         <ul id="contacts"></ul>
         <script src="app.bundle.js"></script>
     </body>
@@ -198,8 +199,8 @@ ForceJS abstracts these differences and allows you to run your app in the browse
     Enter the output directory for your app (defaults to the current directory):
     Enter your company identifier (com.mycompany): com.mycompany.myforcejsapp
     Enter your organization name (Acme, Inc.): MyCompany, Inc.
-    Enter your Connected App ID (defaults to the sample app’s ID): [Enter the consumer key of the connected app created in step 1]
-    Enter your Connected App Callback URI (defaults to the sample app’s URI): myapp://auth/success
+    Enter your Connected App ID (defaults to the sample app’s ID):
+    Enter your Connected App Callback URI (defaults to the sample app’s URI):
     ```
 
 1. Navigate (cd) to the project directory:
@@ -229,7 +230,7 @@ ForceJS abstracts these differences and allows you to run your app in the browse
 1. Type the following command to install Webpack and Babel:
 
     ```
-    npm install babel-loader babel-preset-es2015 webpack --save-dev
+    npm install babel-core babel-loader babel-preset-es2015 webpack --save-dev
     ```
 
 1. Using your favorite editor, open `package.json` and modify the scripts section as follows:
@@ -302,14 +303,23 @@ ForceJS abstracts these differences and allows you to run your app in the browse
 
 1. Open `index.html`. Replace the content with:
 
+    ```
+    <!DOCTYPE html>
+    <html>
+    <body>
+        <h1>Forcejs App</h1>
+        <ul id="contacts"></ul>
+        <script src="cordova.js"></script>
+        <script src="app.bundle.js"></script>
+    </body>
+    </html>
+    ```  
+
+1. On the command line, type the following command to build your project:     
+
   ```
-  <html>
-  <body>
-      <ul id="contacts"></ul>
-      <script src="app.bundle.js"></script>
-  </body>
-  </html>
-  ```  
+  npm run webpack
+  ```
 
 1. Type the following command to run the app in the browser:
 
