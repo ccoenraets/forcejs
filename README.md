@@ -489,12 +489,15 @@ Used to create a record for a Salesforce object
 
 - **valueObject**. Required.
 
-- **Return Value**: Promise
+- **Return Value**: Promise. When the promise is resolved, an object with the following fields is provided:
+    - **errors**: an array of errors (if any)
+    - **id**: the record id of the record that was created
+    - **success**: true or false
 
 Example:
 
 ```
-force.create('contact', {FirstName: "Lisa", LastName: "Jones"})
+service.create('contact', {FirstName: "Lisa", LastName: "Jones"})
     .then(response => {
         console.log(response);
     })
@@ -509,16 +512,16 @@ Used to update a record
 
 - **objectName**. Required.
 
-- **valueObject**. Required.
+- **valueObject**. Required. The object must include and Id (or id) field to identify the record to update.
 
 - **Return Value**: Promise
 
 Example:
 
 ```
-force.update('contact', {Id: "0031a000001x7DOAAY", FirstName: "Emma", LastName: "Wong"})
-    .then(response => {
-        console.log(response);
+service.update('contact', {Id: "0031a000001x7DOAAY", FirstName: "Emma", LastName: "Wong"})
+    .then() => {
+        console.log("Update successful");
     })
     .catch(error => {
         console.log(error);
@@ -538,9 +541,9 @@ Used to delete a record
 Example:
 
 ```
-force.del('contact', "0031a000001x7DOAAY",
-    .then(response => {
-        console.log(response);
+service.del('contact', "0031a000001x7DOAAY",
+    .then() => {
+        console.log("Delete successful");
     })
     .catch(error => {
         console.log(error);
@@ -553,6 +556,17 @@ Used to upsert a record
 
 Example:
 
+```
+service.upsert('contact', 'My_Contact_Id__c', '101', {FirstName: "Emma", LastName: "Wong"})
+    .then() => {
+        console.log("Upsert successful");
+    })
+    .catch(error => {
+        console.log(error);
+    });
+```
+
+
 
 #### retrieve(objectName, recordId, fields)
 
@@ -562,14 +576,14 @@ Used to retrieve a single record
 
 - **recordId**. Required.
 
-- **fields**. Optional. List of fields to retrieve.
+- **fields**. Optional. Array of fields to retrieve. If omitted, all available fields are retrieved.
 
 - **Return Value**: Promise
 
 Example:
 
 ```
-force.retrieve('contact', id)
+service.retrieve('contact', id)
     .then(contact => {
         console.log(contact);
     })
@@ -578,11 +592,11 @@ force.retrieve('contact', id)
     });
 ```
 
-#### apexrest(endpoint)
+#### apexrest(urlMapping)
 
 Used to invoke a custom REST service endpoint implemented by your own Apex class.
 
-- **endpoint**. Required.
+- **urlMapping**. Required. Value of the urlMapping annotation in your Apex class.
 
 - **Return Value**: Promise
 
