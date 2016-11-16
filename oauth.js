@@ -1,5 +1,6 @@
 /**
- * ForceJS - REST toolkit for Salesforce.com
+ * forcejs - REST toolkit for Salesforce.com
+ * forcejs/oauth - OAuth User Agent Workflow module
  * Author: Christophe Coenraets @ccoenraets
  * Version: 0.8.0
  */
