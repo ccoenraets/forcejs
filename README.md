@@ -4,7 +4,7 @@ ForceJS is a micro-library that makes it easy to use the Salesforce REST APIs in
 
 The main target of ForceJS are:
 - Client-side JavaScript applications deployed on your own server (Heroku or elsewhere)
-- Hybrid mobile apps built with Apache Cordova and the Salesforce Mobile SDK.
+- Hybrid mobile apps built with Apache Cordova and the Salesforce Mobile SDK
 
 Applications deployed inside a Salesforce instance (Visualforce Page or Lightning Components) can use one of the data access utilities built into the Salesforce Platform instead: JavaScript Remoting, Remote Objects, Lightning Data Service, etc.   
 
@@ -30,17 +30,17 @@ To support modern application development, and to integrate nicely with these fr
 
 ## Modular
 
-ForceJS is built in a modular fashion. It currently includes two modules:
+ForceJS is built on a modular architecture. It currently includes two modules:
 
 - **forcejs/oauth**: A module that makes it easy to authenticate with Salesforce using the OAuth User Agent workflow
 - **forcejs/data**: A module that makes it easy to access data through the Salesforce APIs
 
-forcejs/oauth and forcejs/service are typically used together in an application, but you can use them separately. For example, you could use **forcejs/oauth** by itself if all your application needs is a Salesforce access token (Lightning Out use cases). Similarly, you could use **forcejs/data** by itself if you already have an access token and all you need is a simple library to access the Salesforce APIs.
+forcejs/oauth and forcejs/service are typically used together in an application, but you can use them separately. For example, you could use **forcejs/oauth** by itself if all you need is a Salesforce access token (Lightning Out use cases). Similarly, you could use **forcejs/data** by itself if you already have an access token, and all you need is a simple library to access the Salesforce APIs.
 
 ## Build Process
 
 Because current browsers don't yet support all the ECMAScript 6 features, you need to use a build tool to compile (transpile) your ECMAScript 6 code to ECMAScript 5 compatible code, and provide the module loading infrastructure.
-Webpack, Browserify, and Rollup are popular options. Webpack instructions are provided in the Quick Start sections below.
+Webpack, Browserify, and Rollup are popular options. Webpack instructions are provided in the Quick Start sections below. Frameworks like React, Angular 2, and Ionic 2 already come with a build process. If you are using these frameworks, no additional step is necessary.
 
 ## Browser and Cordova Abstraction
 
@@ -91,7 +91,7 @@ ForceJS abstracts these differences and allows you to run your app in the browse
     },
     ```
 
-1. Create a file named `webpack.config.js` in your project's root directory:
+1. In your project's root directory, create a file named `webpack.config.js`:
 
     ```
     var path = require('path');
@@ -120,7 +120,7 @@ ForceJS abstracts these differences and allows you to run your app in the browse
     };
     ```
 
-1. Create a file named `index.html` in your project's root directory:
+1. In your project's root directory, create a file named `index.html`:
 
     ```
     <!DOCTYPE html>
@@ -133,7 +133,7 @@ ForceJS abstracts these differences and allows you to run your app in the browse
     </html>
     ```
 
-1. Create a file named `app.js` in your project's root directory:
+1. In your project's root directory, create a file named `app.js`:
 
     ```
     import OAuth from 'forcejs/oauth';
@@ -170,8 +170,7 @@ ForceJS abstracts these differences and allows you to run your app in the browse
     npm start
     ```
 
-
-## Quick Start 2: Hybrid Mobile App
+## Quick Start 2: Hybrid Mobile App with Cordova and the Mobile SDK
 
 1. Install Cordova and the Salesforce Mobile SDK for the platform of your choice. For example, for iOS:
 
@@ -215,25 +214,25 @@ ForceJS abstracts these differences and allows you to run your app in the browse
     npm init
     ```
 
-1. Type the following command to install forcejs:
+1. Type the following command to install **forcejs**:
 
     ```
     npm install forcejs --save-dev
     ```
 
-1. Type the following command to install the force-server development server:
+1. Type the following command to install the **force-server** development server:
 
     ```
     npm install force-server --save-dev
     ```
 
-1. Type the following command to install Webpack and Babel:
+1. Type the following command to install **Webpack** and **Babel**:
 
     ```
     npm install babel-core babel-loader babel-preset-es2015 webpack --save-dev
     ```
 
-1. Using your favorite editor, open `package.json` and modify the scripts section as follows:
+1. Using your favorite editor, open `package.json` and modify the `scripts` section as follows:
 
     ```
     "scripts": {
@@ -242,7 +241,7 @@ ForceJS abstracts these differences and allows you to run your app in the browse
     },
     ```
 
-1. Create a file named `webpack.config.js` in your project's root directory:
+1. In your project's root directory, create a file named `webpack.config.js`:
 
     ```
     var path = require('path');
@@ -272,7 +271,7 @@ ForceJS abstracts these differences and allows you to run your app in the browse
     };
     ```
 
-1. Create a directory called `app`
+1. In your project's root directory, create a directory called `app`
 
 1. In the `app` directory, create a file named `app.js`:
 
@@ -333,7 +332,11 @@ ForceJS abstracts these differences and allows you to run your app in the browse
     cordova build ios
     ```
 
-1. Open `platforms/ios/myforcejsapp.xcodeproj` in Xcode. In the project properties, select a team corresponding to a valid certificate, and run the app in an emulator or on device.    
+1. Run the app on your iOS device:
+    - Open `platforms/ios/myforcejsapp.xcodeproj` in Xcode
+    - Click `myforcejsapp` in the left sidebar
+    - In the `Signing` section, select a team corresponding to a valid certificate
+    - Click the Run button in the toolbar to run the application on your device.    
 
 ## API Reference
 
@@ -341,13 +344,11 @@ ForceJS abstracts these differences and allows you to run your app in the browse
 
 Basic Usage:
 
-    ```
     import OAuth from "forcejs/oauth";
     let oauth = OAuth.createInstance();
     oauth.login().then(result => {
-        console.log(result);
+        console.log(result); // Prints access token, instance URL, and refresh token (if any)
     });
-    ```
 
 #### createInstance(appId, loginURL, oauthCallbackURL)
 
@@ -355,11 +356,15 @@ Basic Usage:
 
     The Salesforce Connected App Id. For convenience, ForceJS uses a default connected app if the appId is not provided. The default connected app supports http://localhost:8200/oauthcallback.html as the OAuth callback URL to provide an out-of-the-box development experience using force-server. You need to create your own connected app with your own OAuth callback URL to run your application on a different server and port.
 
-    *Default*: 3MVG9fMtCkV6eLheIEZplMqWfnGlf3Y.BcWdOf1qytXo9zxgbsrUbS.ExHTgUPJeb3jZeT8NYhc.hMyznKU92
+    *Optional*
+
+    *Default:* 3MVG9fMtCkV6eLheIEZplMqWfnGlf3Y.BcWdOf1qytXo9zxgbsrUbS.ExHTgUPJeb3jZeT8NYhc.hMyznKU92
 
 - **loginURL**
 
     The URL for the login window that should be used as part of the OAuth process.
+
+    *Optional*
 
     *Default*: https://login.salesforce.com
 
@@ -367,61 +372,74 @@ Basic Usage:
 
     The URL Salesforce calls back with an authenticated access token (or an error) at the end of the OAuth authentication workflow.
 
+    *Optional*
+
     *Default*: The base URL the application was loaded from. For example, if you load the app from http://localhost:8200, the default OAuth callback URL is http://localhost:8200/oauthcallback.html. If you load the app from https://myserver.com/myapp, the default OAuth callback URL is https://myserver.com/myapp/oauthcallback.html
 
 #### login()
 
   Starts the User Agent OAuth workflow using a popup window when running in the browser or the oauth plugin when running in Cordova.
 
+  - **Return Value**: A promise. When resolved, an object with the following fields is provided: **accessToken**, **instanceURL**, and **refreshToken**.
+
 ## forcejs/data
+
+Basic Usage:
+
+    import Oauth from "forcejs/oauth";
+    import Service from "forcejs/data";
+    let oauth = OAuth.createInstance();
+    oauth.login().then(oauthResult => {
+        Service.createInstance(oauthResult);
+    });
 
 #### createInstance(oauth, options, name)
 
-- **oauth**
-
-    An object with the following fields:
+- **oauth**. Required. An object with the following fields:
 
     - **accessToken**
 
-      *Required*: yes, *Default*: none
+        The authenticated access token
 
-      The authenticated access token
+        Required, no default
 
     - **instanceURL**
 
-      *Required*: yes, *Default*: none
+        The Salesforce instance URL
 
-      The Salesforce instance URL
+        Required, no default
 
     - **refreshToken**
 
-      *Required*: no, *Default*: none
+        The refresh token
 
-      The refresh token
+        Optional, no default
 
-- **options**. An object with the following fields.
+- **options**. Optional. An object with the following fields:
 
-    - **useProxy**
-
-        *Default*: **false** if the app is running in Cordova or in a Visualforce page, **true** if it's not
+    - **useProxy**.
 
         By default, ForceJS will automatically determine if it needs to use a CORS proxy: It won't use a proxy if the app is running inside a Visualforce page or a Cordova app, and will use the proxy in any other case. You can force ForceJS to always use a proxy by setting this value to true.
 
         Starting in the Spring 15 release, some Salesforce REST APIs (like Chatter and sobjects) support CORS. To allow an app to make direct REST calls against your org, register the app domain in Setup: Administer > Security Controls > CORS. If you whitelist your domain and use APIs that support CORS, you can set useProxy to false.
 
-    - **proxyURL**
+        Optional. Default: **false** if the app is running in Cordova or in a Visualforce page, **true** if it's not.
+
+    - **proxyURL**.
 
         The URL of the CORS proxy server. This parameter is ignored when the app is running in Cordova or inside a Visualforce page.
 
-        *Default*: The base URL the application was loaded from. For example, if you load the app from http://localhost:8200, the default proxyURL is http://localhost:8200. If you load the app from https://myserver.com/myapp, the default proxyURL is https://myserver.com/myapp
+        Optional. Default: The base URL the application was loaded from. For example, if you load the app from http://localhost:8200, the default proxyURL is http://localhost:8200. If you load the app from https://myserver.com/myapp, the default proxyURL is https://myserver.com/myapp
 
     - **apiVersion**
 
         The version of the Salesforce API.
 
-        *Default*: v36.0
+        Optional. Default: v36.0
 
-- **name**. Optional. By default createInstance() creates a singleton instance which is what you want when your app works with a single Salesforce org. If you are building an app that connects to multiple Salesforce instances, provide a name that identifies the instance. For example:
+- **name**
+
+    By default createInstance() creates a singleton instance which is what you want when your app works with a single Salesforce org. If you are building an app that connects to multiple Salesforce instances, provide a name that identifies the instance. For example:
 
     ```
     createInstance(oauth, options, "sales");
@@ -433,18 +451,23 @@ Basic Usage:
     getInstance("sales");
     ```
 
+    Optional. Default: none. If a name is not provided a singleton instance is created. If a name is provided, a named instance is provided.
+
 #### getInstance(name)
 
-- **name**. Optional. If omitted, returns the singleton instance. If specified, return the named instance.
+- **name**
 
+    The name of the instance you want to retrieve.
+
+    Optional. If omitted, returns the singleton instance. If specified, return the named instance.
 
 #### query(soql)
 
 Used to execute a SOQL statement
 
-Parameters:
+- **soql**: The SOQL statement
 
-  - **soql**: The SOQL statement
+- **Return Value**: Promise
 
 Example:
 
@@ -462,14 +485,20 @@ service.query("SELECT id, name FROM contact")
 
 Used to create a record for a Salesforce object
 
+- **objectName**. Required.
+
+- **valueObject**. Required.
+
+- **Return Value**: Promise
+
 Example:
 
 ```
-force.create('contact', {FirstName: "Lisa", LastName: "Jones"},
-    function(response) {
+force.create('contact', {FirstName: "Lisa", LastName: "Jones"})
+    .then(response => {
         console.log(response);
-    },
-    function(error) {
+    })
+    .catch(error => {
         console.log(error);
     });
 ```
@@ -478,14 +507,20 @@ force.create('contact', {FirstName: "Lisa", LastName: "Jones"},
 
 Used to update a record
 
+- **objectName**. Required.
+
+- **valueObject**. Required.
+
+- **Return Value**: Promise
+
 Example:
 
 ```
-force.update('contact', {Id: "0031a000001x7DOAAY", FirstName: "Emma", LastName: "Wong"},
-    function(response) {
+force.update('contact', {Id: "0031a000001x7DOAAY", FirstName: "Emma", LastName: "Wong"})
+    .then(response => {
         console.log(response);
-    },
-    function(error) {
+    })
+    .catch(error => {
         console.log(error);
     });
 ```
@@ -494,44 +529,51 @@ force.update('contact', {Id: "0031a000001x7DOAAY", FirstName: "Emma", LastName: 
 
 Used to delete a record
 
+- **objectName**. Required.
+
+- **recordId**. Required.
+
+- **Return Value**: Promise
+
 Example:
 
 ```
 force.del('contact', "0031a000001x7DOAAY",
-    function(response) {
+    .then(response => {
         console.log(response);
-    },
-    function(error) {
+    })
+    .catch(error => {
         console.log(error);
     });
 ```
 
-#### upsert()
+#### upsert(objectName, externalIdField, externalId, data)
 
 Used to upsert a record
 
 Example:
 
-```
-force.query("SELECT id, name FROM contact",
-    function(result) {
-    ),
-    function(error) {
-    });
-```
 
-#### retrieve(objectName, recordId)
+#### retrieve(objectName, recordId, fields)
 
 Used to retrieve a single record
+
+- **objectName**. Required.
+
+- **recordId**. Required.
+
+- **fields**. Optional. List of fields to retrieve.
+
+- **Return Value**: Promise
 
 Example:
 
 ```
-force.retrieve('contact', id, null,
-    function(contact) {
+force.retrieve('contact', id)
+    .then(contact => {
         console.log(contact);
-    },
-    function(error) {
+    })
+    .catch(error => {
         console.log(error);
     });
 ```
@@ -540,30 +582,34 @@ force.retrieve('contact', id, null,
 
 Used to invoke a custom REST service endpoint implemented by your own Apex class.
 
+- **endpoint**. Required.
+
+- **Return Value**: Promise
+
 Example:
 
 ```
-force.apexrest("contacts",
-    function(result) {
+force.apexrest("contacts")
+    .then(result => {
         console.log(result)
-    ),
-    function(error) {
+    })
+    .catch(error => {
         console.log(error);
     });
 ```
 
-#### request()
+#### request(obj)
 
 The core method to invoke a REST services. Other functions (query, create, update, del, upsert, apexrest) are just convenience functions invoking request() behind the scenes. You can use request() directly to invoke other REST services that are not directly exposed through a convenience function.
 
 Example:
 
 ```
-force.request({path: "/services/data"},
-    function(result) {
+force.request({path: "/services/data"})
+    .then(result => {
         console.log(result)
-    ),
-    function(error) {
+    })
+    .catch(error => {
         console.log(error);
     });
 ```
@@ -592,38 +638,7 @@ Parameters:
 
     An object representing data to be sent as the body of the request.
 
-
-#### isAuthenticated()
-
-Used to figure out if the user is authenticated, in other words ForceJS has an authenticated access token.
-
-Example:
-
-```
-alert(force.isLoggedIn());
-```
-
-#### getUserId()
-
-Used to get the authenticated user's id
-
-Example:
-
-```
-alert("The current user is: " + force.getUserId());
-```
-
-#### discardToken()
-
-Used to discard the authentication token.
-
-Example:
-
-```
-force.discardToken();
-```
-
-#### chatter()
+#### chatter(obj)
 
 A convenience function to use the Chatter API
 
