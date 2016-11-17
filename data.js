@@ -163,7 +163,7 @@ class ForceService {
             url = url + obj.path;
 
             if (obj.params) {
-                url += "?" + this.toQueryString(obj.params);
+                url += "?" + toQueryString(obj.params);
             }
 
             xhr.onreadystatechange = function () {
