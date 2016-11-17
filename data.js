@@ -153,7 +153,7 @@ class ForceService {
 
             var method = obj.method || "GET",
                 xhr = new XMLHttpRequest(),
-                url = getRequestBaseURL();
+                url = this.getRequestBaseURL();
 
             // dev friendly API: Add leading "/" if missing so url + path concat always works
             if (obj.path.charAt(0) !== "/") {
@@ -163,7 +163,7 @@ class ForceService {
             url = url + obj.path;
 
             if (obj.params) {
-                url += "?" + toQueryString(obj.params);
+                url += "?" + this.toQueryString(obj.params);
             }
 
             xhr.onreadystatechange = function () {

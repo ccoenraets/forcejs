@@ -100,8 +100,6 @@ class OAuthWeb extends OAuth {
 
                 if (oauthResult.state == this.instanceId) {
 
-                    console.log(oauthResult);
-
                     if (oauthResult.access_token) {
                         resolve({
                             appId: this.appId,
