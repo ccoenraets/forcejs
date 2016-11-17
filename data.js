@@ -138,7 +138,7 @@ class ForceService {
      *  params:  queryString parameters as a map - Optional
      *  data:  JSON object to send in the request body - Optional
      */
-    requestWithBrowser(obj) {
+    request(obj) {
 
         return new Promise((resolve, reject) => {
 
