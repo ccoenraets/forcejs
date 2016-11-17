@@ -2,7 +2,7 @@
  * forcejs - REST toolkit for Salesforce.com
  * forcejs/oauth - OAuth User Agent Workflow module
  * Author: Christophe Coenraets @ccoenraets
- * Version: 0.8.0
+ * Version: 0.8.1
  */
 "use strict";
 
@@ -100,8 +100,11 @@ class OAuthWeb extends OAuth {
 
                 if (oauthResult.state == this.instanceId) {
 
+                    console.log(oauthResult);
+
                     if (oauthResult.access_token) {
                         resolve({
+                            appId: this.appId,
                             accessToken: oauthResult.access_token,
                             instanceURL: oauthResult.instance_url,
                             refreshToken: oauthResult.refresh_token

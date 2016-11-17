@@ -2,7 +2,7 @@
  * forcejs - REST toolkit for Salesforce.com
  * forcejs/data - Salesforce APIs data module
  * Author: Christophe Coenraets @ccoenraets
- * Version: 0.8.0
+ * Version: 0.8.1
  */
 "use strict";
 
@@ -88,6 +88,7 @@ class ForceService {
 
     constructor(oauth = {}, options = {}) {
 
+        this.appId = oauth.appId;
         this.accessToken = oauth.accessToken;
         this.instanceURL = oauth.instanceURL;
         this.refreshToken = oauth.refreshToken;
@@ -143,7 +144,7 @@ class ForceService {
         return new Promise((resolve, reject) => {
 
 
-            if (!oauth || (!oauth.access_token && !oauth.refresh_token)) {
+            if (!this.accessToken && !this.refreshToken) {
                 if (typeof errorHandler === "function") {
                     reject("No access token. Login and try again.");
                 }
@@ -188,7 +189,7 @@ class ForceService {
 
             xhr.open(method, url, true);
             xhr.setRequestHeader("Accept", "application/json");
-            xhr.setRequestHeader("Authorization", "Bearer " + oauth.access_token);
+            xhr.setRequestHeader("Authorization", "Bearer " + this.accessToken);
             xhr.setRequestHeader("Cache-Control", "no-store");
             // See http://www.salesforce.com/us/developer/docs/chatterapi/Content/intro_requesting_bearer_token_url.htm#kanchor36
             xhr.setRequestHeader("X-Connect-Bearer-Urls", true);
@@ -203,7 +204,7 @@ class ForceService {
                 }
             }
             if (useProxy) {
-                xhr.setRequestHeader("Target-URL", oauth.instance_url);
+                xhr.setRequestHeader("Target-URL", this.instanceURL);
             }
             xhr.send(obj.data ? JSON.stringify(obj.data) : undefined);
 
@@ -482,8 +483,14 @@ class ForceServiceWeb extends ForceService {
         return new Promise((resolve, reject) => {
 
             if (!this.refreshToken) {
-                console.log("ERROR: refresh token does not exist");
-                reject();
+                console.log("Missing refreshToken");
+                reject("Missing refreshToken");
+                return;
+            }
+
+            if (!this.appId) {
+                console.log("Missing appId");
+                reject("Missing appId");
                 return;
             }
 
@@ -491,8 +498,8 @@ class ForceServiceWeb extends ForceService {
 
                 params = {
                     "grant_type": "refresh_token",
-                    "refresh_token": oauth.refresh_token,
-                    "client_id": appId
+                    "refresh_token": this.refreshToken,
+                    "client_id": this.appId
                 },
 
                 url = this.useProxy ? this.proxyURL : this.loginURL;
