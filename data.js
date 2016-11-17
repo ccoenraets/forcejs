@@ -10,14 +10,14 @@
 let context = window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/"));
 
 // if page URL is http://localhost:3000/myapp/index.html, serverURL is http://localhost:3000
-let serverURL = window.location.protocol + '//' + window.location.hostname + (window.location.port ? ':' + window.location.port : '');
+let serverURL = window.location.protocol + "//" + window.location.hostname + (window.location.port ? ":" + window.location.port : "");
 
 // if page URL is http://localhost:3000/myapp/index.html, baseURL is http://localhost:3000/myapp
 let baseURL = serverURL + context;
 
 let joinPaths = (path1, path2) => {
-    if (path1.charAt(path1.length - 1) !== '/') path1 = path1 + "/";
-    if (path2.charAt(0) === '/') path2 = path2.substr(1);
+    if (path1.charAt(path1.length - 1) !== "/") path1 = path1 + "/";
+    if (path2.charAt(0) === "/") path2 = path2.substr(1);
     return path1 + path2;
 };
 
@@ -72,7 +72,7 @@ class ForceService {
         this.instanceURL = oauth.instanceURL;
         this.refreshToken = oauth.refreshToken;
 
-        this.apiVersion = options.apiVersion || 'v36.0';
+        this.apiVersion = options.apiVersion || "v36.0";
         this.loginURL = options.loginURL || "https://login.salesforce.com";
 
         // Whether or not to use a CORS proxy. Defaults to false if app running in Cordova, in a VF page,
@@ -99,8 +99,8 @@ class ForceService {
             url = serverURL;
         }
 
-        // dev friendly API: Remove trailing '/' if any so url + path concat always works
-        if (url.slice(-1) === '/') {
+        // dev friendly API: Remove trailing "/" if any so url + path concat always works
+        if (url.slice(-1) === "/") {
             url = url.slice(0, -1);
         }
 
@@ -113,7 +113,7 @@ class ForceService {
     /**
      * Lets you make any Salesforce REST API request.
      * @param obj - Request configuration object. Can include:
-     *  method:  HTTP method: GET, POST, etc. Optional - Default is 'GET'
+     *  method:  HTTP method: GET, POST, etc. Optional - Default is "GET"
      *  path:    path in to the Salesforce endpoint - Required
      *  params:  queryString parameters as a map - Optional
      *  data:  JSON object to send in the request body - Optional
@@ -122,23 +122,23 @@ class ForceService {
         return new Promise((resolve, reject) => {
 
             if (!this.accessToken) {
-                reject('No access token. Please login and try again.');
+                reject("No access token. Please login and try again.");
                 return;
             }
 
-            let method = obj.method || 'GET',
+            let method = obj.method || "GET",
                 xhr = new XMLHttpRequest(),
                 url = this.getRequestBaseURL();
 
-            // dev friendly API: Add leading '/' if missing so url + path concat always works
-            if (obj.path.charAt(0) !== '/') {
-                obj.path = '/' + obj.path;
+            // dev friendly API: Add leading "/" if missing so url + path concat always works
+            if (obj.path.charAt(0) !== "/") {
+                obj.path = "/" + obj.path;
             }
 
             url = url + obj.path;
 
             if (obj.params) {
-                url += '?' + toQueryString(obj.params);
+                url += "?" + toQueryString(obj.params);
             }
 
             xhr.onreadystatechange = () => {
@@ -147,19 +147,19 @@ class ForceService {
                         resolve(xhr.responseText ? JSON.parse(xhr.responseText) : undefined);
                     } else if (xhr.status === 401) {
                         if (this.refreshToken) {
-                            refreshAccessToken()
+                            this.refreshAccessToken()
                             // Try again with the new token
                                 .then(() => this.request(obj).then(data => resolve(data)).catch(error => reject(error)))
                                 .catch(() => {
                                     console.error(xhr.responseText);
-                                    let error = xhr.responseText ? JSON.parse(xhr.responseText) : {message: 'Server error while refreshing token'};
+                                    let error = xhr.responseText ? JSON.parse(xhr.responseText) : {message: "Server error while refreshing token"};
                                     reject(error);
                                 });
                         } else {
                             reject("Invalid or expired token");
                         }
                     } else {
-                        let error = xhr.responseText ? JSON.parse(xhr.responseText) : {message: 'Server error while executing request'};
+                        let error = xhr.responseText ? JSON.parse(xhr.responseText) : {message: "Server error while executing request"};
                         reject(error);
                     }
                 }
@@ -185,7 +185,7 @@ class ForceService {
      */
     query(soql) {
         return this.request({
-            path: '/services/data/' + this.apiVersion + '/query',
+            path: "/services/data/" + this.apiVersion + "/query",
             params: {q: soql}
         })
     }
@@ -198,7 +198,7 @@ class ForceService {
      */
     retrieve(objectName, id, fields) {
         return this.request({
-                path: '/services/data/' + this.apiVersion + '/sobjects/' + objectName + '/' + id,
+                path: "/services/data/" + this.apiVersion + "/sobjects/" + objectName + "/" + id,
                 params: fields ? {fields: fields} : undefined
             }
         );
@@ -210,7 +210,7 @@ class ForceService {
      */
     getPickListValues(objectName) {
         return this.request({
-                path: '/services/data/' + this.apiVersion + '/sobjects/' + objectName + '/describe'
+                path: "/services/data/" + this.apiVersion + "/sobjects/" + objectName + "/describe"
             }
         );
     }
@@ -222,9 +222,9 @@ class ForceService {
      */
     create(objectName, data) {
         return this.request({
-            method: 'POST',
-            contentType: 'application/json',
-            path: '/services/data/' + this.apiVersion + '/sobjects/' + objectName + '/',
+            method: "POST",
+            contentType: "application/json",
+            path: "/services/data/" + this.apiVersion + "/sobjects/" + objectName + "/",
             data: data
         });
     }
@@ -244,10 +244,10 @@ class ForceService {
         delete fields.id;
 
         return this.request({
-                method: 'POST',
-                contentType: 'application/json',
-                path: '/services/data/' + this.apiVersion + '/sobjects/' + objectName + '/' + id,
-                params: {'_HttpMethod': 'PATCH'},
+                method: "POST",
+                contentType: "application/json",
+                path: "/services/data/" + this.apiVersion + "/sobjects/" + objectName + "/" + id,
+                params: {"_HttpMethod": "PATCH"},
                 data: fields
             }
         );
@@ -260,8 +260,8 @@ class ForceService {
      */
     del(objectName, id) {
         return this.request({
-                method: 'DELETE',
-                path: '/services/data/' + this.apiVersion + '/sobjects/' + objectName + '/' + id
+                method: "DELETE",
+                path: "/services/data/" + this.apiVersion + "/sobjects/" + objectName + "/" + id
             }
         );
     }
@@ -275,9 +275,9 @@ class ForceService {
      */
     upsert(objectName, externalIdField, externalId, data) {
         return this.request({
-                method: 'PATCH',
-                contentType: 'application/json',
-                path: '/services/data/' + this.apiVersion + '/sobjects/' + objectName + '/' + externalIdField + '/' + externalId,
+                method: "PATCH",
+                contentType: "application/json",
+                path: "/services/data/" + this.apiVersion + "/sobjects/" + objectName + "/" + externalIdField + "/" + externalId,
                 data: data
             }
         );
@@ -338,7 +338,7 @@ class ForceServiceWeb extends ForceService {
         return new Promise((resolve, reject) => {
 
             if (!this.refreshToken) {
-                console.log('ERROR: refresh token does not exist');
+                console.log("ERROR: refresh token does not exist");
                 reject();
                 return;
             }
@@ -346,30 +346,30 @@ class ForceServiceWeb extends ForceService {
             let xhr = new XMLHttpRequest(),
 
                 params = {
-                    'grant_type': 'refresh_token',
-                    'refresh_token': oauth.refresh_token,
-                    'client_id': appId
+                    "grant_type": "refresh_token",
+                    "refresh_token": oauth.refresh_token,
+                    "client_id": appId
                 },
 
                 url = this.useProxy ? this.proxyURL : this.loginURL;
 
-            url = url + '/services/oauth2/token?' + toQueryString(params);
+            url = url + "/services/oauth2/token?" + toQueryString(params);
 
             xhr.onreadystatechange = () => {
                 if (xhr.readyState === 4) {
                     if (xhr.status === 200) {
-                        console.log('Token refreshed');
+                        console.log("Token refreshed");
                         let res = JSON.parse(xhr.responseText);
                         this.accessToken = res.access_token;
                         resolve();
                     } else {
-                        console.log('Error while trying to refresh token: ' + xhr.responseText);
+                        console.log("Error while trying to refresh token: " + xhr.responseText);
                         reject();
                     }
                 }
             };
 
-            xhr.open('POST', url, true);
+            xhr.open("POST", url, true);
             if (!this.useProxy) {
                 xhr.setRequestHeader("Target-URL", this.loginURL);
             }
@@ -387,8 +387,8 @@ class ForceServiceCordova extends ForceService {
             document.addEventListener("deviceready", () => {
                 let oauthPlugin = cordova.require("com.salesforce.plugin.oauth");
                 if (!oauthPlugin) {
-                    console.error('Salesforce Mobile SDK OAuth plugin not available');
-                    reject('Salesforce Mobile SDK OAuth plugin not available');
+                    console.error("Salesforce Mobile SDK OAuth plugin not available");
+                    reject("Salesforce Mobile SDK OAuth plugin not available");
                     return;
                 }
                 oauthPlugin.authenticate(
@@ -397,7 +397,7 @@ class ForceServiceCordova extends ForceService {
                         resolve();
                     },
                     function () {
-                        console.error('Error refreshing oauth access token using the oauth plugin');
+                        console.error("Error refreshing oauth access token using the oauth plugin");
                         reject();
                     }
                 );

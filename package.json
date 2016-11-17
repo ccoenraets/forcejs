@@ -2,7 +2,6 @@
   "name": "forcejs",
   "version": "0.8.0",
   "description": "Salesforce REST SDK",
-  "main": "lib/force.js",
   "scripts": {
   },
   "repository": {

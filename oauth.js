@@ -8,26 +8,26 @@
 
 let instanceCounter = 0;
 
-let // if page URL is http://localhost:3000/myapp/index.html, context is /myapp
-    context = window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")),
+// if page URL is http://localhost:3000/myapp/index.html, context is /myapp
+let context = window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/"));
 
-    // if page URL is http://localhost:3000/myapp/index.html, serverURL is http://localhost:3000
-    serverURL = window.location.protocol + '//' + window.location.hostname + (window.location.port ? ':' + window.location.port : ''),
+// if page URL is http://localhost:3000/myapp/index.html, serverURL is http://localhost:3000
+let serverURL = window.location.protocol + "//" + window.location.hostname + (window.location.port ? ":" + window.location.port : "");
 
-    // if page URL is http://localhost:3000/myapp/index.html, baseURL is http://localhost:3000/myapp
-    baseURL = serverURL + context,
+// if page URL is http://localhost:3000/myapp/index.html, baseURL is http://localhost:3000/myapp
+let baseURL = serverURL + context;
 
-    // Reference to the Salesforce OAuth plugin
-    oauthPlugin;
+// Reference to the Salesforce OAuth plugin
+let oauthPlugin;
 
 let getQueryStringAsObject = url => {
-    let obj = {},
-        index = url.indexOf('#');
+    let obj = {};
+    let index = url.indexOf("#");
     if (index > -1) {
-        let queryString = decodeURIComponent(url.substr(index + 1)),
-            params = queryString.split('&');
+        let queryString = decodeURIComponent(url.substr(index + 1));
+        let params = queryString.split("&");
         params.forEach(param => {
-            let splitter = param.split('=');
+            let splitter = param.split("=");
             obj[splitter[0]] = splitter[1];
         });
     }
@@ -47,7 +47,7 @@ class OAuth {
         this.instanceId = instanceCounter;
         this.appId = appId || "3MVG9fMtCkV6eLheIEZplMqWfnGlf3Y.BcWdOf1qytXo9zxgbsrUbS.ExHTgUPJeb3jZeT8NYhc.hMyznKU92";
         this.loginURL = loginURL || "https://login.salesforce.com";
-        this.oauthCallbackURL = oauthCallbackURL || baseURL + '/oauthcallback.html';
+        this.oauthCallbackURL = oauthCallbackURL || baseURL + "/oauthcallback.html";
     }
 
     login() {
@@ -62,8 +62,8 @@ class OAuthCordova extends OAuth{
             document.addEventListener("deviceready", () => {
                 oauthPlugin = cordova.require("com.salesforce.plugin.oauth");
                 if (!oauthPlugin) {
-                    console.error('Salesforce Mobile SDK OAuth plugin not available');
-                    reject('Salesforce Mobile SDK OAuth plugin not available');
+                    console.error("Salesforce Mobile SDK OAuth plugin not available");
+                    reject("Salesforce Mobile SDK OAuth plugin not available");
                     return;
                 }
                 oauthPlugin.getAuthCredentials(
@@ -90,8 +90,8 @@ class OAuthWeb extends OAuth {
     login() {
         return new Promise((resolve, reject) => {
 
-            console.log('loginURL: ' + this.loginURL);
-            console.log('oauthCallbackURL: ' + this.oauthCallbackURL);
+            console.log("loginURL: " + this.loginURL);
+            console.log("oauthCallbackURL: " + this.oauthCallbackURL);
 
             document.addEventListener("oauthCallback", (event) => {
 
@@ -114,7 +114,7 @@ class OAuthWeb extends OAuth {
             });
 
             let loginWindowURL = this.loginURL + `/services/oauth2/authorize?client_id=${this.appId}&redirect_uri=${this.oauthCallbackURL}&response_type=token&state=${this.instanceId}`;
-            window.open(loginWindowURL, '_blank', 'location=no');
+            window.open(loginWindowURL, "_blank", "location=no");
 
         });
 
