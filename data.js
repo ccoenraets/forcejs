@@ -203,7 +203,7 @@ class ForceService {
                     xhr.setRequestHeader(headerName, headerValue);
                 }
             }
-            if (useProxy) {
+            if (this.useProxy) {
                 xhr.setRequestHeader("Target-URL", this.instanceURL);
             }
             xhr.send(obj.data ? JSON.stringify(obj.data) : undefined);
