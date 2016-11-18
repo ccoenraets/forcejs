@@ -331,8 +331,12 @@ var force = (function () {
 
     function loginWithPlugin(successHandler, errorHandler) {
         document.addEventListener("deviceready", function () {
-            oauthPlugin = cordova.require("com.salesforce.plugin.oauth");
-            networkPlugin = cordova.require("com.salesforce.plugin.network");
+            try {
+                oauthPlugin = cordova.require("com.salesforce.plugin.oauth");
+                networkPlugin = cordova.require("com.salesforce.plugin.network");
+            } catch(e) {
+                // fail silently
+            }
             if (!oauthPlugin) {
                 console.error('Salesforce Mobile SDK OAuth plugin not available');
                 errorHandler('Salesforce Mobile SDK OAuth plugin not available');
