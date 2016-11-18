@@ -58,7 +58,11 @@ let namedInstances = {};
 let networkPlugin;
 
 document.addEventListener("deviceready", function () {
-    networkPlugin = cordova.require("com.salesforce.plugin.network");
+    try {
+        networkPlugin = cordova.require("com.salesforce.plugin.network");
+    } catch (e) {
+        // fail silently
+    }
 }, false);
 
 export default {
