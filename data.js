@@ -540,7 +540,12 @@ class ForceServiceCordova extends ForceService {
     refreshAccessToken() {
         return new Promise((resolve, reject) => {
             document.addEventListener("deviceready", () => {
-                let oauthPlugin = cordova.require("com.salesforce.plugin.oauth");
+                let oauthPlugin;
+                try {
+                    oauthPlugin = cordova.require("com.salesforce.plugin.oauth");
+                } catch (e) {
+                    // fail silently
+                }
                 if (!oauthPlugin) {
                     console.error("Salesforce Mobile SDK OAuth plugin not available");
                     reject("Salesforce Mobile SDK OAuth plugin not available");
