@@ -2,7 +2,7 @@
  * forcejs - REST toolkit for Salesforce.com
  * forcejs/data - Salesforce APIs data module
  * Author: Christophe Coenraets @ccoenraets
- * Version: 0.8.0
+ * Version: 0.8.1
  */
 "use strict";
 
@@ -32,6 +32,19 @@ let toQueryString = obj => {
     return parts.join("&");
 };
 
+let parseUrl = url => {
+    let match = url.match(/^(https?\:)\/\/(([^:\/?#]*)(?:\:([0-9]+))?)([^?#]*)(\?[^#]*|)(#.*|)$/);
+    return match && {
+            protocol: match[1],
+            host: match[2],
+            hostname: match[3],
+            port: match[4],
+            path: match[5],
+            params: parseQueryString(match[6]),
+            hash: match[7]
+        };
+};
+
 // Keeps track of single instance when instance is created with singleton form of createInstance:
 // createInstance(oauth, options) with no third parameter (name of the instance)
 let singleton;
@@ -40,6 +53,17 @@ let singleton;
 // let org1 = ForceService.createInstance(oauth, options, "org1");
 // let org2 = ForceService.createInstance(oauth, options, "org2");
 let namedInstances = {};
+
+// Reference to the Salesforce Network plugin
+let networkPlugin;
+
+document.addEventListener("deviceready", function () {
+    try {
+        networkPlugin = cordova.require("com.salesforce.plugin.network");
+    } catch (e) {
+        // fail silently
+    }
+}, false);
 
 export default {
 
@@ -68,6 +92,7 @@ class ForceService {
 
     constructor(oauth = {}, options = {}) {
 
+        this.appId = oauth.appId;
         this.accessToken = oauth.accessToken;
         this.instanceURL = oauth.instanceURL;
         this.refreshToken = oauth.refreshToken;
@@ -119,14 +144,18 @@ class ForceService {
      *  data:  JSON object to send in the request body - Optional
      */
     request(obj) {
+
         return new Promise((resolve, reject) => {
 
-            if (!this.accessToken) {
-                reject("No access token. Please login and try again.");
+
+            if (!this.accessToken && !this.refreshToken) {
+                if (typeof errorHandler === "function") {
+                    reject("No access token. Login and try again.");
+                }
                 return;
             }
 
-            let method = obj.method || "GET",
+            var method = obj.method || "GET",
                 xhr = new XMLHttpRequest(),
                 url = this.getRequestBaseURL();
 
@@ -141,25 +170,22 @@ class ForceService {
                 url += "?" + toQueryString(obj.params);
             }
 
-            xhr.onreadystatechange = () => {
+            xhr.onreadystatechange = function () {
                 if (xhr.readyState === 4) {
                     if (xhr.status > 199 && xhr.status < 300) {
                         resolve(xhr.responseText ? JSON.parse(xhr.responseText) : undefined);
-                    } else if (xhr.status === 401) {
-                        if (this.refreshToken) {
-                            this.refreshAccessToken()
+                    } else if (xhr.status === 401 && this.refreshToken) {
+                        this.refreshAccessToken()
                             // Try again with the new token
-                                .then(() => this.request(obj).then(data => resolve(data)).catch(error => reject(error)))
-                                .catch(() => {
-                                    console.error(xhr.responseText);
-                                    let error = xhr.responseText ? JSON.parse(xhr.responseText) : {message: "Server error while refreshing token"};
-                                    reject(error);
-                                });
-                        } else {
-                            reject("Invalid or expired token");
-                        }
+                            .then(() => this.request(obj).then(data => resolve(data)).catch(error => reject(error)))
+                            .catch(() => {
+                                console.error(xhr.responseText);
+                                let error = xhr.responseText ? JSON.parse(xhr.responseText) : {message: "An error has occurred"};
+                                reject(error);
+                            });
                     } else {
-                        let error = xhr.responseText ? JSON.parse(xhr.responseText) : {message: "Server error while executing request"};
+                        console.error(xhr.responseText);
+                        let error = xhr.responseText ? JSON.parse(xhr.responseText) : {message: "An error has occurred"};
                         reject(error);
                     }
                 }
@@ -168,8 +194,18 @@ class ForceService {
             xhr.open(method, url, true);
             xhr.setRequestHeader("Accept", "application/json");
             xhr.setRequestHeader("Authorization", "Bearer " + this.accessToken);
+            xhr.setRequestHeader("Cache-Control", "no-store");
+            // See http://www.salesforce.com/us/developer/docs/chatterapi/Content/intro_requesting_bearer_token_url.htm#kanchor36
+            xhr.setRequestHeader("X-Connect-Bearer-Urls", true);
+
             if (obj.contentType) {
                 xhr.setRequestHeader("Content-Type", obj.contentType);
+            }
+            if (obj.headerParams) {
+                for (var headerName in obj.headerParams.getOwnPropertyNames()) {
+                    var headerValue = obj.headerParams[headerName];
+                    xhr.setRequestHeader(headerName, headerValue);
+                }
             }
             if (this.useProxy) {
                 xhr.setRequestHeader("Target-URL", this.instanceURL);
@@ -199,9 +235,8 @@ class ForceService {
     retrieve(objectName, id, fields) {
         return this.request({
                 path: "/services/data/" + this.apiVersion + "/sobjects/" + objectName + "/" + id,
-                params: fields ? {fields: fields} : undefined
-            }
-        );
+                params: fields ? {fields: (typeof fields === "string" ? fields : fields.join(","))} : undefined
+            });
     }
 
     /**
@@ -289,24 +324,28 @@ class ForceService {
      */
     apexrest(pathOrParams) {
 
-        let params;
+        let obj;
 
-        if (pathOrParams.substring) {
-            params = {path: pathOrParams};
+        if (typeof pathOrParams === "string") {
+            obj = {path: pathOrParams, method: "GET"};
         } else {
-            params = pathOrParams;
+            obj = pathOrParams;
 
-            if (params.path.charAt(0) !== "/") {
-                params.path = "/" + params.path;
+            if (obj.path.charAt(0) !== "/") {
+                obj.path = "/" + obj.path;
             }
 
-            if (params.path.substr(0, 18) !== "/services/apexrest") {
-                params.path = "/services/apexrest" + params.path;
+            if (obj.path.substr(0, 18) !== "/services/apexrest") {
+                obj.path = "/services/apexrest" + obj.path;
             }
         }
 
-        return this.request(params);
-    };
+        if (!obj.contentType) {
+            obj.contentType = (obj.method == "DELETE" || obj.method == "GET" ? null : "application/json");
+        }
+
+        return this.request(obj);
+    }
 
     /**
      * Convenience function to invoke the Chatter API
@@ -330,6 +369,116 @@ class ForceService {
 
     }
 
+    /*
+     * Lists summary information about each Salesforce.com version currently
+     * available, including the version, label, and a link to each version's
+     * root.
+     */
+    versions() {
+        return this.request(
+            {
+                path: "/services/data/"
+            }
+        );
+    }
+
+    /*
+     * Lists available resources for the client's API version, including
+     * resource name and URI.
+     */
+    resources() {
+        return this.request(
+            {
+                path: "/services/data/" + this.apiVersion
+            }
+        );
+    }
+
+    /*
+     * Lists the available objects and their metadata for your organization's
+     * data.
+     * @param successHandler
+     * @param errorHandler
+     */
+    describeGlobal() {
+        return this.request(
+            {
+                path: "/services/data/" + this.apiVersion + "/sobjects"
+            }
+        );
+    }
+
+    /*
+     * Describes the individual metadata for the specified object.
+     * @param objectName object name; e.g. "Account"
+     */
+    metadata(objectName) {
+        return this.request(
+            {
+                path: "/services/data/" + this.apiVersion + "/sobjects/" + objectName
+            }
+        );
+    }
+
+    /*
+     * Completely describes the individual metadata at all levels for the
+     * specified object.
+     * @param objectName object name; e.g. "Account"
+     */
+    describe(objectName) {
+        return this.request(
+            {
+                path: "/services/data/" + this.apiVersion + "/sobjects/" + objectName + "/describe"
+            }
+        );
+    }
+
+    /*
+     * Fetches the layout configuration for a particular sobject name and record type id.
+     * @param objectName object name; e.g. "Account"
+     * @param (Optional) recordTypeId Id of the layout's associated record type
+     */
+    describeLayout(objectName, recordTypeId) {
+        recordTypeId = recordTypeId || "";
+        return this.request(
+            {
+                path: "/services/data/" + this.apiVersion + "/sobjects/" + objectName + "/describe/layouts/" + recordTypeId
+            }
+        );
+    }
+
+    /*
+     * Queries the next set of records based on pagination.
+     * This should be used if performing a query that retrieves more than can be returned
+     * in accordance with http://www.salesforce.com/us/developer/docs/api_rest/Content/dome_query.htm
+     *
+     * @param url - the url retrieved from nextRecordsUrl or prevRecordsUrl
+     */
+    queryMore(url) {
+
+        let obj = this.parseUrl(url);
+        return this.request(
+            {
+                path: obj.path,
+                params: obj.params
+            }
+        );
+    }
+
+    /*
+     * Executes the specified SOSL search.
+     * @param sosl a string containing the search to execute - e.g. "FIND
+     *             {needle}"
+     */
+    search(sosl) {
+        return this.request(
+            {
+                path: "/services/data/" + this.apiVersion + "/search",
+                params: {q: sosl}
+            }
+        );
+    }
+
 }
 
 class ForceServiceWeb extends ForceService {
@@ -338,8 +487,14 @@ class ForceServiceWeb extends ForceService {
         return new Promise((resolve, reject) => {
 
             if (!this.refreshToken) {
-                console.log("ERROR: refresh token does not exist");
-                reject();
+                console.log("Missing refreshToken");
+                reject("Missing refreshToken");
+                return;
+            }
+
+            if (!this.appId) {
+                console.log("Missing appId");
+                reject("Missing appId");
                 return;
             }
 
@@ -347,8 +502,8 @@ class ForceServiceWeb extends ForceService {
 
                 params = {
                     "grant_type": "refresh_token",
-                    "refresh_token": oauth.refresh_token,
-                    "client_id": appId
+                    "refresh_token": this.refreshToken,
+                    "client_id": this.appId
                 },
 
                 url = this.useProxy ? this.proxyURL : this.loginURL;
@@ -385,7 +540,12 @@ class ForceServiceCordova extends ForceService {
     refreshAccessToken() {
         return new Promise((resolve, reject) => {
             document.addEventListener("deviceready", () => {
-                let oauthPlugin = cordova.require("com.salesforce.plugin.oauth");
+                let oauthPlugin;
+                try {
+                    oauthPlugin = cordova.require("com.salesforce.plugin.oauth");
+                } catch (e) {
+                    // fail silently
+                }
                 if (!oauthPlugin) {
                     console.error("Salesforce Mobile SDK OAuth plugin not available");
                     reject("Salesforce Mobile SDK OAuth plugin not available");
@@ -403,6 +563,49 @@ class ForceServiceCordova extends ForceService {
                 );
             }, false);
         });
+    }
+
+    /**
+     * @param path: full path or path relative to end point - required
+     * @param endPoint: undefined or endpoint - optional
+     * @return object with {endPoint:XX, path:relativePathToXX}
+     *
+     * For instance for undefined, "/services/data"     => {endPoint:"/services/data", path:"/"}
+     *                  undefined, "/services/apex/abc" => {endPoint:"/services/apex", path:"/abc"}
+     *                  "/services/data, "/versions"    => {endPoint:"/services/data", path:"/versions"}
+     */
+    computeEndPointIfMissing(endPoint, path) {
+        if (endPoint !== undefined) {
+            return {endPoint:endPoint, path:path};
+        }
+        else {
+            let parts = path.split("/").filter(function(s) { return s !== ""; });
+            if (parts.length >= 2) {
+                return {endPoint: "/" + parts.slice(0,2).join("/"), path: "/" + parts.slice(2).join("/")};
+            }
+            else {
+                return {endPoint: "", path:path};
+            }
+        }
+    }
+
+    request(obj) {
+        if (networkPlugin) {
+            return new Promise((resolve, reject) => {
+                let obj2 = computeEndPointIfMissing(obj.endPoint, obj.path);
+                networkPlugin.sendRequest(
+                    obj2.endPoint,
+                    obj2.path,
+                    resolve,
+                    reject,
+                    obj.method,
+                    obj.data || obj.params,
+                    obj.headerParams
+                );
+            });
+        } else {
+            return super.request(obj);
+        }
     }
 
 }
