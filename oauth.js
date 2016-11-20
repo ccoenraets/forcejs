@@ -107,7 +107,7 @@ class OAuthWeb extends OAuth {
                             accessToken: oauthResult.access_token,
                             instanceURL: oauthResult.instance_url,
                             refreshToken: oauthResult.refresh_token,
-                            userId: oauth.id.split("/").pop()
+                            userId: oauthResult.id.split("/").pop()
                         });
                     } else {
                         reject(oauthResult);
