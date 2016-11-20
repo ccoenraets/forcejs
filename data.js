@@ -2,7 +2,7 @@
  * forcejs - REST toolkit for Salesforce.com
  * forcejs/data - Salesforce APIs data module
  * Author: Christophe Coenraets @ccoenraets
- * Version: 0.8.1
+ * Version: 0.8.2
  */
 "use strict";
 
@@ -92,10 +92,11 @@ class ForceService {
 
     constructor(oauth = {}, options = {}) {
 
-        this.appId = oauth.appId;
+        this.appId = oauth.appId; // Used in refreshAccessToken()
         this.accessToken = oauth.accessToken;
         this.instanceURL = oauth.instanceURL;
         this.refreshToken = oauth.refreshToken;
+        this.userId = oauth.userId;
 
         this.apiVersion = options.apiVersion || "v36.0";
         this.loginURL = options.loginURL || "https://login.salesforce.com";
@@ -133,7 +134,11 @@ class ForceService {
     }
 
     refreshAccessToken() {
-    };
+    }
+
+    getUserid() {
+        return this.userId;
+    }
 
     /**
      * Lets you make any Salesforce REST API request.
