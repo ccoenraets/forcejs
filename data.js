@@ -136,7 +136,7 @@ class ForceService {
     refreshAccessToken() {
     }
 
-    getUserid() {
+    getUserId() {
         return this.userId;
     }
 
