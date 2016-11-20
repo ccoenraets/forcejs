@@ -380,7 +380,7 @@ Basic Usage:
 
   Starts the User Agent OAuth workflow using a popup window when running in the browser or the oauth plugin when running in Cordova.
 
-  - **Return Value**: A promise. When resolved, an object with the following fields is provided: **accessToken**, **instanceURL**, and **refreshToken**.
+  - **Return Value**: A promise. When resolved, an object with the following fields is provided: **appId**, **accessToken**, **instanceURL**, **refreshToken**, and **userId**.
 
 ## forcejs/data
 
