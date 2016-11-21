@@ -698,13 +698,9 @@ Parameters:
 
     An object representing data to be sent as the body of the request.
     
-    versions() {
-        return this.request(
-            {
-                path: "/services/data/"
-            }
-        );
-    }
+#### versions()
+
+Lists summary information about each Salesforce.com version currently available, including the version, label, and a link to each version's root.
 
 #### resources()
 
