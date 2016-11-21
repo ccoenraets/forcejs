@@ -2,7 +2,7 @@
  * forcejs - REST toolkit for Salesforce.com
  * forcejs/oauth - OAuth User Agent Workflow module
  * Author: Christophe Coenraets @ccoenraets
- * Version: 0.8.1
+ * Version: 0.8.2
  */
 "use strict";
 
@@ -71,7 +71,8 @@ class OAuthCordova extends OAuth{
                         resolve({
                             accessToken: creds.accessToken,
                             instanceURL: creds.instanceUrl,
-                            refreshToken: creds.refreshToken
+                            refreshToken: creds.refreshToken,
+                            userId: creds.userId
                         });
                     },
                     function (error) {
@@ -105,7 +106,8 @@ class OAuthWeb extends OAuth {
                             appId: this.appId,
                             accessToken: oauthResult.access_token,
                             instanceURL: oauthResult.instance_url,
-                            refreshToken: oauthResult.refresh_token
+                            refreshToken: oauthResult.refresh_token,
+                            userId: oauthResult.id.split("/").pop()
                         });
                     } else {
                         reject(oauthResult);

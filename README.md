@@ -380,7 +380,7 @@ Basic Usage:
 
   Starts the User Agent OAuth workflow using a popup window when running in the browser or the oauth plugin when running in Cordova.
 
-  - **Return Value**: A promise. When resolved, an object with the following fields is provided: **accessToken**, **instanceURL**, and **refreshToken**.
+  - **Return Value**: A promise. When resolved, an object with the following fields is provided: **appId**, **accessToken**, **instanceURL**, **refreshToken**, and **userId**.
 
 ## forcejs/data
 
@@ -460,6 +460,11 @@ Basic Usage:
     The name of the instance you want to retrieve.
 
     Optional. If omitted, returns the singleton instance. If specified, return the named instance.
+
+#### getUserId()
+
+- **Return Value**: the id of the authenticated user.    
+
 
 #### query(soql)
 
@@ -692,3 +697,48 @@ Parameters:
 - **data**
 
     An object representing data to be sent as the body of the request.
+    
+#### versions()
+
+Lists summary information about each Salesforce.com version currently available, including the version, label, and a link to each version's root.
+
+#### resources()
+
+Lists available resources for the client's API version, including resource name and URI.
+
+#### describeGlobal()
+
+Lists the available objects and their metadata for your organization's data.
+
+#### metadata(objectName)
+
+Describes the individual metadata for the specified object.
+
+- **objectName** Object name; e.g. "Account"
+
+#### describe(objectName)
+
+Completely describes the individual metadata at all levels for the specified object.
+
+- **objectName**: object name; e.g. "Account"
+
+#### describeLayout(objectName, recordTypeId)
+
+Fetches the layout configuration for a particular sobject name and record type id.
+
+- **objectName**: object name; e.g. "Account"
+- **recordTypeId** (optional): Id of the layout's associated record type
+
+#### queryMore(url)
+
+Queries the next set of records based on pagination.
+This should be used if performing a query that retrieves more than can be returned
+in accordance with http://www.salesforce.com/us/developer/docs/api_rest/Content/dome_query.htm
+
+- **url**: the url retrieved from nextRecordsUrl or prevRecordsUrl
+
+#### search(sosl)
+
+Executes the specified SOSL search.
+
+- **sosl**: a string containing the search to execute - e.g. "FIND {needle}"
