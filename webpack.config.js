@@ -9,8 +9,7 @@ babelConfig.cacheDirectory = true;
 
 module.exports = {
 	entry: {
-		data: './lib/data.js',
-		oauth: './lib/oauth.js'
+		force: './force.js'
 	},
 
 	output: {

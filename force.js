@@ -1,4 +1,4 @@
 module.exports = {
-	data: require('./build/data'),
-	oauth: require('./build/oauth')
+	data: require('./lib/data'),
+	oauth: require('./lib/oauth')
 };
