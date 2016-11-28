@@ -3,7 +3,7 @@
   "version": "0.8.8",
   "description": "Salesforce REST SDK",
   "scripts": {
-    "clean": "rimraf build/*",
+    "clean": "rimraf dist/*",
     "webpack": "webpack",
     "build": "npm run clean && npm run webpack"
   },
