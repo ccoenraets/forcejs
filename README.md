@@ -35,7 +35,57 @@ ForceJS is built on a modular architecture. It currently includes two modules:
 - **forcejs/oauth**: A module that makes it easy to authenticate with Salesforce using the OAuth User Agent workflow
 - **forcejs/data**: A module that makes it easy to access data through the Salesforce APIs
 
-forcejs/oauth and forcejs/service are typically used together in an application, but you can use them separately. For example, you could use **forcejs/oauth** by itself if all you need is a Salesforce access token (Lightning Out use cases). Similarly, you could use **forcejs/data** by itself if you already have an access token, and all you need is a simple library to access the Salesforce APIs.
+`forcejs/oauth` and `forcejs/service` are typically used together in an application, but you can use them separately. For example, you could use **forcejs/oauth** by itself if all you need is a Salesforce access token (Lightning Out use cases). Similarly, you could use **forcejs/data** by itself if you already have an access token, and all you need is a simple library to access the Salesforce APIs.
+
+### To use:
+
+#### As a node module
+```javascript
+import OAuth from 'forcejs/oauth';
+import Data from 'forcejs/data';
+import Force from 'forcejs';
+
+OAuth.createInstance(/*...*/); // ...
+Data.createInstance(/*...*/); // ...
+Force.oauth.createInstance(/*...*/); // ...
+Force.data.createInstance(/*...*/); // ...
+```
+
+#### ES6 Import
+Alternatively, if you are using a build tool that supports [Tree Shaking](https://blog.engineyard.com/2016/tree-shaking), you can use ES6 import syntax.
+
+```javascript
+import { oauth, data } from 'forcejs';
+
+oauth.createInstance(); // ...
+data.createInstance(); // ...
+```
+
+**NOTE**: Keep in mind that build tools that do not support tree shaking (like Webpack v1) will still build the entire library (as opposed to just the imported submodules).
+
+#### As standalone files in browser
+Alternatively, the individual modules (or all modules combined) are offered as standalone files in the `dist/` folder that can be included in `<script></script>` tags.
+
+```html
+<!-- Creates a "force" global variable -->
+<script src="force.js"></script>
+<script>
+    force.oauth.createInstance(/***/);
+    force.data.createInstance(/***/);
+</script>
+
+<!-- Creates an "oauth" global variable -->
+<script src="oauth.js"></script>
+<script>
+    oauth.createInstance(/***/);
+</script>
+
+<!-- Creates a "data" global variable -->
+<script src="data.js"></script>
+<script>
+    data.createInstance(/***/);
+</script>
+```
 
 ## Build Process
 
@@ -276,7 +326,7 @@ ForceJS abstracts these differences and allows you to run your app in the browse
 1. In the `app` directory, create a file named `app.js`:
 
     ```
-    import OAuth from 'forcejs/oauth';
+    import OAuth from 'forcejs/oauth'; // or import { oauth } from 'forcejs'
     import Service from 'forcejs/data';
 
     let oauth = OAuth.createInstance();
