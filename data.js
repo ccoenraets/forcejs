@@ -65,7 +65,7 @@ document.addEventListener("deviceready", function () {
     }
 }, false);
 
-export default {
+module.exports = {
 
     createInstance: (oauth, options, name) => {
         let instance;
@@ -461,7 +461,7 @@ class ForceService {
      */
     queryMore(url) {
 
-        let obj = this.parseUrl(url);
+        let obj = parseUrl(url);
         return this.request(
             {
                 path: obj.path,

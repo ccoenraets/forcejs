@@ -34,9 +34,9 @@ let getQueryStringAsObject = url => {
     return obj;
 };
 
-export default {
-    createInstance: (oauth, options) => {
-        return window.cordova ? new OAuthCordova(oauth, options) : new OAuthWeb(oauth, options);
+module.exports = {
+    createInstance: (appId, loginURL, oauthCallbackURL) => {
+        return window.cordova ? new OAuthCordova(appId, loginURL, oauthCallbackURL) : new OAuthWeb(appId, loginURL, oauthCallbackURL);
     }
 }
 
