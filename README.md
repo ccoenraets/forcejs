@@ -35,7 +35,7 @@ ForceJS is built on a modular architecture. It currently includes two modules:
 - **forcejs/oauth**: A module that makes it easy to authenticate with Salesforce using the OAuth User Agent workflow
 - **forcejs/data**: A module that makes it easy to access data through the Salesforce APIs
 
-`forcejs/oauth` and `forcejs/service` are typically used together in an application, but you can use them separately. For example, you could use **forcejs/oauth** by itself if all you need is a Salesforce access token (Lightning Out use cases). Similarly, you could use **forcejs/data** by itself if you already have an access token, and all you need is a simple library to access the Salesforce APIs.
+`forcejs/oauth` and `forcejs/data` are typically used together in an application, but you can use them separately. For example, you could use **forcejs/oauth** by itself if all you need is a Salesforce access token (Lightning Out use cases). Similarly, you could use **forcejs/data** by itself if you already have an access token, and all you need is a simple library to access the Salesforce APIs.
 
 ### To use:
 
@@ -47,8 +47,8 @@ import Force from 'forcejs';
 
 OAuth.createInstance(/*...*/); // ...
 Data.createInstance(/*...*/); // ...
-Force.oauth.createInstance(/*...*/); // ...
-Force.data.createInstance(/*...*/); // ...
+Force.OAuth.createInstance(/*...*/); // ...
+Force.Data.createInstance(/*...*/); // ...
 ```
 
 #### ES6 Import
