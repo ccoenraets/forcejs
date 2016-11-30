@@ -55,10 +55,10 @@ Force.data.createInstance(/*...*/); // ...
 Alternatively, if you are using a build tool that supports [Tree Shaking](https://blog.engineyard.com/2016/tree-shaking), you can use ES6 import syntax.
 
 ```javascript
-import { oauth, data } from 'forcejs';
+import { OAuth, Data } from 'forcejs';
 
-oauth.createInstance(); // ...
-data.createInstance(); // ...
+OAuth.createInstance(); // ...
+Data.createInstance(); // ...
 ```
 
 **NOTE**: Keep in mind that build tools that do not support tree shaking (like Webpack v1) will still build the entire library (as opposed to just the imported submodules).
@@ -70,20 +70,20 @@ Alternatively, the individual modules (or all modules combined) are offered as s
 <!-- Creates a "force" global variable -->
 <script src="force.js"></script>
 <script>
-    force.oauth.createInstance(/***/);
-    force.data.createInstance(/***/);
+    force.OAuth.createInstance(/***/);
+    force.Data.createInstance(/***/);
 </script>
 
 <!-- Creates an "oauth" global variable -->
 <script src="forceOauth.js"></script>
 <script>
-    oauth.createInstance(/***/);
+    forceOauth.createInstance(/***/);
 </script>
 
 <!-- Creates a "data" global variable -->
 <script src="forceData.js"></script>
 <script>
-    data.createInstance(/***/);
+    forceOauth.createInstance(/***/);
 </script>
 ```
 
@@ -326,7 +326,7 @@ ForceJS abstracts these differences and allows you to run your app in the browse
 1. In the `app` directory, create a file named `app.js`:
 
     ```
-    import OAuth from 'forcejs/oauth'; // or import { oauth } from 'forcejs'
+    import OAuth from 'forcejs/oauth'; // or import { OAuth } from 'forcejs'
     import Service from 'forcejs/data';
 
     let oauth = OAuth.createInstance();
