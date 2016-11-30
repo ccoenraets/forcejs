@@ -75,13 +75,13 @@ Alternatively, the individual modules (or all modules combined) are offered as s
 </script>
 
 <!-- Creates an "oauth" global variable -->
-<script src="oauth.js"></script>
+<script src="forceOauth.js"></script>
 <script>
     oauth.createInstance(/***/);
 </script>
 
 <!-- Creates a "data" global variable -->
-<script src="data.js"></script>
+<script src="forceData.js"></script>
 <script>
     data.createInstance(/***/);
 </script>

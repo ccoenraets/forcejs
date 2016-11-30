@@ -13,8 +13,8 @@ module.exports = {
 		force: './force.js',
 
 		// Individual submodules
-		data: ['./data.js'],
-		oauth: ['./oauth.js']
+		forceData: ['./data.js'],
+		forceOAuth: ['./oauth.js']
 	},
 
 	output: {
