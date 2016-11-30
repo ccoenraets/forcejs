@@ -13,6 +13,10 @@ Applications deployed inside a Salesforce instance (Visualforce Page or Lightnin
 Modern JavaScript applications now use ECMAScript 6 (aka ECMAScript 2015) and beyond. The current version of modern frameworks (such as React, Angular 2, and Ionic 2) are also built on top of ECMAScript 6 and beyond.
 To support modern application development, and to integrate nicely with these frameworks, ForceJS is now built on top of ECMAScript 6 as well.  
 
+## Compatible with ECMAScript 5
+
+The ECMAScript 6 source files are compiled into an ECMAScript 5 compatible version. The ECMAScript 5 compatible files are available in the `dist` directory.
+
 > The original ECMAScript 5 version is available in the [es5 branch](https://github.com/ccoenraets/forcejs/tree/es5) of this repository
 
 ## Key Characteristics
@@ -37,61 +41,6 @@ ForceJS is built on a modular architecture. It currently includes two modules:
 
 `forcejs/oauth` and `forcejs/data` are typically used together in an application, but you can use them separately. For example, you could use **forcejs/oauth** by itself if all you need is a Salesforce access token (Lightning Out use cases). Similarly, you could use **forcejs/data** by itself if you already have an access token, and all you need is a simple library to access the Salesforce APIs.
 
-### To use:
-
-#### As a node module
-```javascript
-import OAuth from 'forcejs/oauth';
-import Data from 'forcejs/data';
-import Force from 'forcejs';
-
-OAuth.createInstance(/*...*/); // ...
-Data.createInstance(/*...*/); // ...
-Force.OAuth.createInstance(/*...*/); // ...
-Force.Data.createInstance(/*...*/); // ...
-```
-
-#### ES6 Import
-Alternatively, if you are using a build tool that supports [Tree Shaking](https://blog.engineyard.com/2016/tree-shaking), you can use ES6 import syntax.
-
-```javascript
-import { OAuth, Data } from 'forcejs';
-
-OAuth.createInstance(); // ...
-Data.createInstance(); // ...
-```
-
-**NOTE**: Keep in mind that build tools that do not support tree shaking (like Webpack v1) will still build the entire library (as opposed to just the imported submodules).
-
-#### As standalone files in browser
-Alternatively, the individual modules (or all modules combined) are offered as standalone files in the `dist/` folder that can be included in `<script></script>` tags.
-
-```html
-<!-- Creates a "force" global variable -->
-<script src="force.js"></script>
-<script>
-    force.OAuth.createInstance(/***/);
-    force.Data.createInstance(/***/);
-</script>
-
-<!-- Creates an "oauth" global variable -->
-<script src="forceOauth.js"></script>
-<script>
-    forceOauth.createInstance(/***/);
-</script>
-
-<!-- Creates a "data" global variable -->
-<script src="forceData.js"></script>
-<script>
-    forceOauth.createInstance(/***/);
-</script>
-```
-
-## Build Process
-
-Because current browsers don't yet support all the ECMAScript 6 features, you need to use a build tool to compile (transpile) your ECMAScript 6 code to ECMAScript 5 compatible code, and provide the module loading infrastructure.
-Webpack, Browserify, and Rollup are popular options. Webpack instructions are provided in the Quick Start sections below. Frameworks like React, Angular 2, and Ionic 2 already come with a build process. If you are using these frameworks, no additional step is necessary.
-
 ## Browser and Cordova Abstraction
 
 ForceJS can be used to develop browser-based apps or hybrid mobile apps using the Salesforce Mobile SDK and Apache Cordova. If you develop a hybrid application using the Salesforce Mobile SDK, you often switch back and forth between running the app in the browser and on device. Developing in the browser is generally faster and easier to debug, but you still need to test device-specific features and check that everything runs as expected on the target platforms. The problem is that the configuration of OAuth and REST is different when running in the browser and on device. Here is a summary of the key differences:
@@ -105,6 +54,71 @@ ForceJS can be used to develop browser-based apps or hybrid mobile apps using th
 (*) Starting in the Spring 15 release, some Salesforce REST APIs (like Chatter and sobjects) support CORS. To allow an app to make direct REST calls against your org, register the app domain in Setup: Administer > Security Controls > CORS.
 
 ForceJS abstracts these differences and allows you to run your app in the browser and on device without code or configuration changes.
+
+## ECMAScript 6 Usage
+
+```javascript
+import {OAuth, Data} from 'forcejs';
+
+let oauth = OAuth.createInstance();
+oauth.login().then(oauthResult => Data.createInstance(oauthResult));
+
+let loadContacts = () => {
+    let data = Data.getInstance();
+    data.query('select id, Name from contact LIMIT 50')
+        .then(response => {
+            let contacts = response.records;
+            // do something with contacts
+    });
+}
+```
+
+If you are only using one of the forcejs modules (either oauth or data), the following import syntax is recommended to make sure the compiled version does not include the module you don't use if your build tool doesn't support tree shaking:
+
+``` javascript
+import OAuth from 'forcejs/oauth';
+//or
+import Data from 'forcejs/data';
+```
+
+Because current browsers don't yet support all the ECMAScript 6 features, you need to use a build tool to compile (transpile) your ECMAScript 6 code to ECMAScript 5 compatible code, and provide the module loading infrastructure.
+Webpack, Browserify, and Rollup are popular options. Webpack instructions are provided in the Quick Start sections below. Frameworks like React, Angular 2, and Ionic 2 already come with a build process. If you are using these frameworks, no additional step is necessary.
+
+## ECMAScript 5 Usage
+
+Use the ECMAScript 5 compatible files available in the `dist` directory.
+
+```html
+<script src="force.js"></script>
+<script>
+    var oauth = force.OAuth.createInstance();
+    oauth.login().then(function(oauthResult) {
+        forceData.createInstance(oauthResult));    
+    });
+
+    function loadContacts() {
+        var data = force.Data.getInstance();
+        data.query('select id, Name from contact LIMIT 50')
+            .then(function() {
+                var contacts = response.records;
+                // do something with contacts
+            });
+    }
+</script>
+```
+
+If you are only using one of the forcejs modules (either oauth or data), the following  syntax is recommended to avoid including modules you don't use:
+
+```html
+<script src="forceOAuth.js"></script>
+// or
+<script src="forceData.js"></script>
+
+var oauth = forceOAuth.createInstance();
+// or
+var data = forceData.createInstance(oauthResult);
+</script>
+```
 
 ## Quick Start 1: Simple Browser App
 
@@ -747,7 +761,7 @@ Parameters:
 - **data**
 
     An object representing data to be sent as the body of the request.
-    
+
 #### versions()
 
 Lists summary information about each Salesforce.com version currently available, including the version, label, and a link to each version's root.
