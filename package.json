@@ -13,7 +13,7 @@
   },
   "author": "Christophe Coenraets <ccoenraets@gmail.com> (http://coenraets.org/)",
   "license": "MIT",
-  "main": "force.js",
+  "main": "./dist/force.js",
   "bugs": {
     "url": "https://github.com/ccoenraets/forcejs/issues"
   },

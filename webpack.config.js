@@ -10,11 +10,11 @@ babelConfig.cacheDirectory = true;
 module.exports = {
 	entry: {
 		// All submodules
-		force: './force.js',
+		force: './src/force.js',
 
 		// Individual submodules
-		forceDataService: ['./data-service.js'],
-		forceOAuth: ['./oauth.js']
+		"force.service": ['./src/service.js'],
+		"force.oauth": ['./src/oauth.js']
 	},
 
 	output: {
@@ -22,6 +22,14 @@ module.exports = {
 		filename: '[name].js',
 		library: '[name]',
 		libraryTarget: 'umd'
+	},
+
+	resolve: {
+		root: path.resolve(__dirname),
+		alias: {
+			oauth: 'dist/force.oauth',
+			service: 'dist/force.service',
+		}
 	},
 
 	module: {
