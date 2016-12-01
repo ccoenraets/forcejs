@@ -1,8 +1,8 @@
 /**
  * forcejs - REST toolkit for Salesforce.com
- * forcejs/data - Salesforce APIs data module
+ * forcejs/data-service - Salesforce APIs data module
  * Author: Christophe Coenraets @ccoenraets
- * Version: 0.8.2
+ * Version: 0.8.9
  */
 "use strict";
 
