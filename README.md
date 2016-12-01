@@ -58,14 +58,14 @@ ForceJS abstracts these differences and allows you to run your app in the browse
 ## ECMAScript 6 Usage
 
 ```javascript
-import {OAuth, Data} from 'forcejs';
+import {OAuth, DataService} from 'forcejs';
 
 let oauth = OAuth.createInstance();
-oauth.login().then(oauthResult => Data.createInstance(oauthResult));
+oauth.login().then(oauthResult => DataService.createInstance(oauthResult));
 
 let loadContacts = () => {
-    let data = Data.getInstance();
-    data.query('select id, Name from contact LIMIT 50')
+    let service = DataService.getInstance();
+    service.query('select id, Name from contact LIMIT 50')
         .then(response => {
             let contacts = response.records;
             // do something with contacts
@@ -78,7 +78,7 @@ If you are only using one of the forcejs modules (either oauth or data), the fol
 ``` javascript
 import OAuth from 'forcejs/oauth';
 //or
-import Data from 'forcejs/data';
+import DataService from 'forcejs/data-service';
 ```
 
 Because current browsers don't yet support all the ECMAScript 6 features, you need to use a build tool to compile (transpile) your ECMAScript 6 code to ECMAScript 5 compatible code, and provide the module loading infrastructure.
@@ -93,12 +93,12 @@ Use the ECMAScript 5 compatible files available in the `dist` directory.
 <script>
     var oauth = force.OAuth.createInstance();
     oauth.login().then(function(oauthResult) {
-        forceData.createInstance(oauthResult));    
+        force.DataService.createInstance(oauthResult));    
     });
 
     function loadContacts() {
-        var data = force.Data.getInstance();
-        data.query('select id, Name from contact LIMIT 50')
+        var service = force.DataService.getInstance();
+        service.query('select id, Name from contact LIMIT 50')
             .then(function() {
                 var contacts = response.records;
                 // do something with contacts
@@ -112,11 +112,11 @@ If you are only using one of the forcejs modules (either oauth or data), the fol
 ```html
 <script src="forceOAuth.js"></script>
 // or
-<script src="forceData.js"></script>
+<script src="forceDataService.js"></script>
 
 var oauth = forceOAuth.createInstance();
 // or
-var data = forceData.createInstance(oauthResult);
+var service = forceDataService.createInstance(oauthResult);
 </script>
 ```
 
