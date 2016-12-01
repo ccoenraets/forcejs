@@ -13,23 +13,15 @@ module.exports = {
 		force: './src/force.js',
 
 		// Individual submodules
-		"force.service": ['./src/service.js'],
-		"force.oauth": ['./src/oauth.js']
+		service: ['./src/service.js'],
+		oauth: ['./src/oauth.js']
 	},
 
 	output: {
 		path: './dist',
-		filename: '[name].js',
-		library: '[name]',
+		filename: 'force.[name].js',
+		library: 'force.[name]',
 		libraryTarget: 'umd'
-	},
-
-	resolve: {
-		root: path.resolve(__dirname),
-		alias: {
-			oauth: 'dist/force.oauth',
-			service: 'dist/force.service',
-		}
 	},
 
 	module: {

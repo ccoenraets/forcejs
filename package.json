@@ -2,6 +2,11 @@
   "name": "forcejs",
   "version": "0.8.9",
   "description": "Salesforce REST SDK",
+  "keywords": [
+    "salesforce",
+    "rest",
+    "apis"
+  ],
   "scripts": {
     "clean": "rimraf dist/*",
     "webpack": "webpack",
@@ -14,6 +19,7 @@
   "author": "Christophe Coenraets <ccoenraets@gmail.com> (http://coenraets.org/)",
   "license": "MIT",
   "main": "./dist/force.js",
+  "files": "./dist",
   "bugs": {
     "url": "https://github.com/ccoenraets/forcejs/issues"
   },
