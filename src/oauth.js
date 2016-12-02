@@ -2,7 +2,7 @@
  * forcejs - REST toolkit for Salesforce.com
  * forcejs/oauth - OAuth User Agent Workflow module
  * Author: Christophe Coenraets @ccoenraets
- * Version: 0.8.9
+ * Version: 0.8.10
  */
 "use strict";
 

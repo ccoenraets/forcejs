@@ -1,6 +1,6 @@
 {
   "name": "forcejs",
-  "version": "0.8.9",
+  "version": "0.8.10",
   "description": "Salesforce REST SDK",
   "keywords": [
     "salesforce",
@@ -10,7 +10,8 @@
   "scripts": {
     "clean": "rimraf dist/*",
     "webpack": "webpack",
-    "build": "npm run clean && npm run webpack"
+    "build": "npm run clean && npm run webpack",
+    "prepublish": "webpack --config webpack.config.npm.js"
   },
   "repository": {
     "type": "git",
@@ -18,8 +19,7 @@
   },
   "author": "Christophe Coenraets <ccoenraets@gmail.com> (http://coenraets.org/)",
   "license": "MIT",
-  "main": "./dist/force.js",
-  "files": "./dist",
+  "main": "./all/index.js",
   "bugs": {
     "url": "https://github.com/ccoenraets/forcejs/issues"
   },

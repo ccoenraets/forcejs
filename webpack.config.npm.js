@@ -18,8 +18,8 @@ module.exports = {
 	},
 
 	output: {
-		path: './dist',
-		filename: 'force.[name].js',
+		path: '.',
+		filename: '[name]/index.js',
 		library: 'force.[name]',
 		libraryTarget: 'umd'
 	},
