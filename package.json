@@ -21,6 +21,7 @@
   "license": "MIT",
   "main": "./all/index.js",
   "files": [
+    "all",
     "service",
     "oauth"
   ],
