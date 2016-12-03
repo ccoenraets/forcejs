@@ -20,6 +20,10 @@
   "author": "Christophe Coenraets <ccoenraets@gmail.com> (http://coenraets.org/)",
   "license": "MIT",
   "main": "./all/index.js",
+  "files": [
+    "service",
+    "oauth"
+  ],
   "bugs": {
     "url": "https://github.com/ccoenraets/forcejs/issues"
   },
