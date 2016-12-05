@@ -1,6 +1,6 @@
 {
   "name": "forcejs",
-  "version": "0.8.10",
+  "version": "0.8.11",
   "description": "Salesforce REST SDK",
   "keywords": [
     "salesforce",
@@ -21,8 +21,9 @@
   "license": "MIT",
   "main": "./all/index.js",
   "files": [
+    "resources",
     "all",
-    "service",
+    "data-service",
     "oauth"
   ],
   "bugs": {

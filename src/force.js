@@ -1,4 +1,4 @@
 module.exports = {
-	Service: require('./service'),
-	OAuth: require('./oauth')
+	OAuth: require('./oauth'),
+	DataService: require('./data-service')
 };
