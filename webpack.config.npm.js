@@ -45,8 +45,8 @@ module.exports = [
         name: "all",
         entry: "./src/force.js",
         output: {
-            path: "./dist",
-            filename: "force.all.js",
+            path: "./all",
+            filename: "index.js",
             library: "force",
             libraryTarget: "umd"
         },
@@ -57,8 +57,8 @@ module.exports = [
         name: "oauth",
         entry: "./src/oauth.js",
         output: {
-            path: "./dist",
-            filename: "force.oauth.js",
+            path: "./oauth",
+            filename: "index.js",
             library: ["force", "OAuth"],
             libraryTarget: "umd"
         },
@@ -69,8 +69,8 @@ module.exports = [
         name: "dataservice",
         entry: "./src/data-service.js",
         output: {
-            path: "./dist",
-            filename: "force.data-service.js",
+            path: "./data-service",
+            filename: "index.js",
             library: ["force", "DataService"],
             libraryTarget: "umd"
         },

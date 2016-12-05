@@ -15,9 +15,9 @@ To support modern application development, and to integrate nicely with these fr
 
 ## Compatible with ECMAScript 5
 
-The ECMAScript 6 source files are compiled into an ECMAScript 5 compatible version. The ECMAScript 5 compatible files are available in the `dist` directory.
+The ECMAScript 6 source files are compiled into an ECMAScript 5 compatible version. The ECMAScript 5 compatible files are available in the `dist` directory. The ECMAScript 5 files support the Universal Module Definition (UMD) format. In other words, they can be used with AMD or CommonJS module loaders as well as globally using the `force.OAuth` and `force.DataService` variables.
 
-> The original ECMAScript 5 version is available in the [es5 branch](https://github.com/ccoenraets/forcejs/tree/es5) of this repository
+> The original ECMAScript 5-only version of forcejs is still available in the [es5 branch](https://github.com/ccoenraets/forcejs/tree/es5) of this repository. The es5 branch is no longer actively developed.
 
 ## Key Characteristics
 
@@ -37,9 +37,9 @@ The ECMAScript 6 source files are compiled into an ECMAScript 5 compatible versi
 ForceJS is built on a modular architecture. It currently includes two modules:
 
 - **forcejs/oauth**: A module that makes it easy to authenticate with Salesforce using the OAuth User Agent workflow
-- **forcejs/data**: A module that makes it easy to access data through the Salesforce APIs
+- **forcejs/data-service**: A module that makes it easy to access data through the Salesforce APIs
 
-`forcejs/oauth` and `forcejs/data` are typically used together in an application, but you can use them separately. For example, you could use **forcejs/oauth** by itself if all you need is a Salesforce access token (Lightning Out use cases). Similarly, you could use **forcejs/data** by itself if you already have an access token, and all you need is a simple library to access the Salesforce APIs.
+`forcejs/oauth` and `forcejs/data-service` are typically used together in an application, but you can use them separately. For example, you could use **forcejs/oauth** by itself if all you need is a Salesforce access token (Lightning Out use cases). Similarly, you could use **forcejs/data-service** by itself if you already have an access token, and all you need is a simple library to access the Salesforce APIs.
 
 ## Browser and Cordova Abstraction
 
@@ -73,7 +73,7 @@ let loadContacts = () => {
 }
 ```
 
-If you are only using one of the forcejs modules (either oauth or data), the following import syntax is recommended to make sure the compiled version does not include the module you don't use if your build tool doesn't support tree shaking:
+If you are only using one of the forcejs submodules (either oauth or data), the following import syntax is recommended to make sure the compiled version does not include the module you don't use if your build tool doesn't support tree shaking:
 
 ``` javascript
 import OAuth from 'forcejs/oauth';
@@ -89,7 +89,7 @@ Webpack, Browserify, and Rollup are popular options. Webpack instructions are pr
 Use the ECMAScript 5 compatible files available in the `dist` directory.
 
 ```html
-<script src="force.js"></script>
+<script src="force.all.js"></script>
 <script>
     var oauth = force.OAuth.createInstance();
     oauth.login().then(function(oauthResult) {
@@ -110,14 +110,13 @@ Use the ECMAScript 5 compatible files available in the `dist` directory.
 If you are only using one of the forcejs modules (either oauth or data), the following  syntax is recommended to avoid including modules you don't use:
 
 ```html
-<script src="forceOAuth.js"></script>
+<script src="force.oauth.js"></script>
 // or
-<script src="forceDataService.js"></script>
+<script src="force.data-service.js"></script>
 
-var oauth = forceOAuth.createInstance();
+var oauth = force.OAuth.createInstance();
 // or
-var service = forceDataService.createInstance(oauthResult);
-</script>
+var service = force.DataService.createInstance(oauthResult);
 ```
 
 ## Quick Start 1: Simple Browser App
@@ -200,18 +199,17 @@ var service = forceDataService.createInstance(oauthResult);
 1. In your project's root directory, create a file named `app.js`:
 
     ```
-    import OAuth from 'forcejs/oauth';
-    import Service from 'forcejs/data';
+    import {OAuth, DataService} from 'forcejs';
 
     let oauth = OAuth.createInstance();
     oauth.login()
         .then(oauthResult => {
-            Service.createInstance(oauthResult);
+            DataService.createInstance(oauthResult);
             loadContacts();
         });
 
     let loadContacts = () => {
-        let service = Service.getInstance();
+        let service = DataService.getInstance();
         service.query('select id, Name from contact LIMIT 50')
             .then(response => {
                 let contacts = response.records;
@@ -340,18 +338,17 @@ var service = forceDataService.createInstance(oauthResult);
 1. In the `app` directory, create a file named `app.js`:
 
     ```
-    import OAuth from 'forcejs/oauth'; // or import { OAuth } from 'forcejs'
-    import Service from 'forcejs/data';
+    import {OAuth, DataService} from 'forcejs';
 
     let oauth = OAuth.createInstance();
     oauth.login()
         .then(oauthResult => {
-            Service.createInstance(oauthResult);
+            DataService.createInstance(oauthResult);
             loadContacts();
         });
 
     let loadContacts = () => {
-        let service = Service.getInstance();
+        let service = DataService.getInstance();
         service.query('select id, Name from contact LIMIT 50')
             .then(response => {
                 let contacts = response.records;
@@ -446,12 +443,12 @@ Basic Usage:
 
   - **Return Value**: A promise. When resolved, an object with the following fields is provided: **appId**, **accessToken**, **instanceURL**, **refreshToken**, and **userId**.
 
-## forcejs/data
+## forcejs/data-service
 
 Basic Usage:
 
     import Oauth from "forcejs/oauth";
-    import Service from "forcejs/data";
+    import Service from "forcejs/data-service";
     let oauth = OAuth.createInstance();
     oauth.login().then(oauthResult => {
         Service.createInstance(oauthResult);
@@ -688,7 +685,7 @@ The core method to invoke a REST services. Other functions (query, create, updat
 Example:
 
 ```
-force.request({path: "/services/data"})
+force.request({path: "/services/data-service"})
     .then(result => {
         console.log(result)
     })
