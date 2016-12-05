@@ -1,6 +1,6 @@
 {
   "name": "forcejs",
-  "version": "0.8.11",
+  "version": "2.0.0",
   "description": "Salesforce REST SDK",
   "keywords": [
     "salesforce",
