@@ -15,9 +15,9 @@ To support modern application development, and to integrate nicely with these fr
 
 ## Compatible with ECMAScript 5
 
-The ECMAScript 6 source files are compiled into an ECMAScript 5 compatible version. The ECMAScript 5 compatible files are available in the `dist` directory.
+The ECMAScript 6 source files are compiled into an ECMAScript 5 compatible version. The ECMAScript 5 compatible files are available in the `dist` directory. The ECMAScript 5 files support the Universal Module Definition (UMD) format. In other words, they can be used with AMD or CommonJS module loaders as well as globally using the `force.OAuth` and `force.DataService` variables.
 
-> The original ECMAScript 5 version is available in the [es5 branch](https://github.com/ccoenraets/forcejs/tree/es5) of this repository
+> The original ECMAScript 5-only version of forcejs is still available in the [es5 branch](https://github.com/ccoenraets/forcejs/tree/es5) of this repository. The es5 branch is no longer actively developed.
 
 ## Key Characteristics
 
@@ -73,7 +73,7 @@ let loadContacts = () => {
 }
 ```
 
-If you are only using one of the forcejs modules (either oauth or data), the following import syntax is recommended to make sure the compiled version does not include the module you don't use if your build tool doesn't support tree shaking:
+If you are only using one of the forcejs submodules (either oauth or data), the following import syntax is recommended to make sure the compiled version does not include the module you don't use if your build tool doesn't support tree shaking:
 
 ``` javascript
 import OAuth from 'forcejs/oauth';
@@ -110,14 +110,13 @@ Use the ECMAScript 5 compatible files available in the `dist` directory.
 If you are only using one of the forcejs modules (either oauth or data), the following  syntax is recommended to avoid including modules you don't use:
 
 ```html
-<script src="force.OAuth.js"></script>
+<script src="force.oauth.js"></script>
 // or
-<script src="force.DataService.js"></script>
+<script src="force.data-service.js"></script>
 
 var oauth = force.OAuth.createInstance();
 // or
 var service = force.DataService.createInstance(oauthResult);
-</script>
 ```
 
 ## Quick Start 1: Simple Browser App
