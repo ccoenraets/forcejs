@@ -2,7 +2,7 @@
  * forcejs - REST toolkit for Salesforce.com
  * forcejs/data-service - Salesforce APIs data service module
  * Author: Christophe Coenraets @ccoenraets
- * Version: 2.0.1
+ * Version: 2.0.2
  */
 "use strict";
 
@@ -597,7 +597,10 @@ class ForceServiceCordova extends ForceService {
     request(obj) {
         if (networkPlugin) {
             return new Promise((resolve, reject) => {
-                let obj2 = computeEndPointIfMissing(obj.endPoint, obj.path);
+                let obj2 = this.computeEndPointIfMissing(obj.endPoint, obj.path);
+                let localQ = obj.params.q;
+                localQ = localQ.replace(/[\n]/g, " ");
+                obj.params.q = localQ;
                 networkPlugin.sendRequest(
                     obj2.endPoint,
                     obj2.path,
