@@ -99,7 +99,7 @@ Use the ECMAScript 5 compatible files available in the `dist` directory.
     function loadContacts() {
         var service = force.DataService.getInstance();
         service.query('select id, Name from contact LIMIT 50')
-            .then(function() {
+            .then(function(response) {
                 var contacts = response.records;
                 // do something with contacts
             });
