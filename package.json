@@ -1,0 +1,40 @@
+{
+  "name": "forcejs",
+  "version": "2.0.1",
+  "description": "Salesforce REST SDK",
+  "keywords": [
+    "salesforce",
+    "rest",
+    "apis"
+  ],
+  "scripts": {
+    "clean": "rimraf dist/*",
+    "webpack": "webpack",
+    "build": "npm run clean && npm run webpack",
+    "prepublish": "webpack --config webpack.config.npm.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ccoenraets/forcejs.git"
+  },
+  "author": "Christophe Coenraets <ccoenraets@gmail.com> (http://coenraets.org/)",
+  "license": "MIT",
+  "main": "./all/index.js",
+  "files": [
+    "resources",
+    "all",
+    "data-service",
+    "oauth"
+  ],
+  "bugs": {
+    "url": "https://github.com/ccoenraets/forcejs/issues"
+  },
+  "homepage": "https://github.com/ccoenraets/forcejs#readme",
+  "devDependencies": {
+    "babel-core": "6.18.2",
+    "babel-loader": "6.2.8",
+    "babel-preset-es2015": "6.18.0",
+    "rimraf": "^2.5.4",
+    "webpack": "1.13.3"
+  }
+}
