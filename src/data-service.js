@@ -175,7 +175,7 @@ class ForceService {
                 url += "?" + toQueryString(obj.params);
             }
 
-            xhr.onreadystatechange = function () {
+            xhr.onreadystatechange =  () =>{
                 if (xhr.readyState === 4) {
                     if (xhr.status > 199 && xhr.status < 300) {
                         resolve(xhr.responseText ? JSON.parse(xhr.responseText) : undefined);
@@ -556,8 +556,7 @@ class ForceServiceCordova extends ForceService {
                     reject("Salesforce Mobile SDK OAuth plugin not available");
                     return;
                 }
-                oauthPlugin.authenticate(
-                    function (response) {
+                oauthPlugin.authenticate( (response)=> {
                         this.accessToken = response.accessToken;
                         resolve();
                     },
