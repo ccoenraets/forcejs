@@ -95,7 +95,7 @@ class ForceService {
         this.appId = oauth.appId; // Used in refreshAccessToken()
         this.accessToken = oauth.accessToken;
         this.instanceURL = oauth.instanceURL;
-        this.refreshToeen = oauth.refreshToken;
+        this.refreshToken = oauth.refreshToken;
         this.userId = oauth.userId;
 
         this.apiVersion = options.apiVersion || "v36.0";
