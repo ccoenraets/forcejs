@@ -184,14 +184,10 @@ class ForceService {
                             // Try again with the new token
                             .then(() => this.request(obj).then(data => resolve(data)).catch(error => reject(error)))
                             .catch(() => {
-                                console.error(xhr.responseText);
-                                let error = xhr.responseText ? JSON.parse(xhr.responseText) : {message: "An error has occurred"};
-                                reject(error);
+                                reject(xhr);
                             });
                     } else {
-                        console.error(xhr.responseText);
-                        let error = xhr.responseText ? JSON.parse(xhr.responseText) : {message: "An error has occurred"};
-                        reject(error);
+                        reject(xhr);
                     }
                 }
             };
