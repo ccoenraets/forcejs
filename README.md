@@ -725,11 +725,11 @@ A convenience function to use the Chatter API
 Example:
 
 ```
-force.chatter({path: "/users/me"},
-    function(result) {
+force.chatter({path: "/users/me"})
+    .then(result => {
         console.log(result)
-    ),
-    function(error) {
+    })
+    .catch(error => {
         console.log(error);
     });
 ```
