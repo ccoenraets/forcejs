@@ -2,6 +2,7 @@
  * forcejs - REST toolkit for Salesforce.com
  * forcejs/data-service - Salesforce APIs data service module
  * Author: Christophe Coenraets @ccoenraets
+ * Fork: David Hohl <david.hohl@capgemini.com>
  * Version: 2.0.2
  */
 "use strict";
@@ -110,7 +111,7 @@ class ForceService {
         this.proxyURL = options.proxyURL || baseURL;
     }
 
-    /*
+    /**
      * Determines the request base URL.
      */
     getRequestBaseURL() {
@@ -370,7 +371,7 @@ class ForceService {
 
     }
 
-    /*
+    /**
      * Lists summary information about each Salesforce.com version currently
      * available, including the version, label, and a link to each version's
      * root.
@@ -383,7 +384,7 @@ class ForceService {
         );
     }
 
-    /*
+    /**
      * Lists available resources for the client's API version, including
      * resource name and URI.
      */
@@ -395,7 +396,7 @@ class ForceService {
         );
     }
 
-    /*
+    /**
      * Lists the available objects and their metadata for your organization's
      * data.
      * @param successHandler
@@ -409,7 +410,7 @@ class ForceService {
         );
     }
 
-    /*
+    /**
      * Describes the individual metadata for the specified object.
      * @param objectName object name; e.g. "Account"
      */
@@ -421,7 +422,7 @@ class ForceService {
         );
     }
 
-    /*
+    /**
      * Completely describes the individual metadata at all levels for the
      * specified object.
      * @param objectName object name; e.g. "Account"
@@ -434,10 +435,8 @@ class ForceService {
         );
     }
 
-    /*
+    /**
      * Fetches the layout configuration for a particular sobject name and record type id.
-     * @param objectName object name; e.g. "Account"
-     * @param (Optional) recordTypeId Id of the layout's associated record type
      */
     describeLayout(objectName, recordTypeId) {
         recordTypeId = recordTypeId || "";
@@ -448,7 +447,39 @@ class ForceService {
         );
     }
 
-    /*
+    /**
+     * list all created reports
+     * @param id return a specific reprot
+     * @returns {*}
+     */
+    reports(id=null) {
+        if (id) {
+            id = '/' + id;
+        }
+        return this.request(
+            {
+                path: "/services/data/" + this.apiVersion + "/analytics/reports" + id
+            }
+        );
+    }
+
+    /**
+     * Lists all created dashboard
+     * @param id return a specific dashboard
+     * @returns {*}
+     */
+    dashboard(id=null) {
+        if (id) {
+            id = '/' + id;
+        }
+        return this.request(
+            {
+                path: "/services/data/" + this.apiVersion + "/analytics/dashboards" + id
+            }
+        );
+    }
+
+    /**
      * Queries the next set of records based on pagination.
      * This should be used if performing a query that retrieves more than can be returned
      * in accordance with http://www.salesforce.com/us/developer/docs/api_rest/Content/dome_query.htm
@@ -466,7 +497,7 @@ class ForceService {
         );
     }
 
-    /*
+    /**
      * Executes the specified SOSL search.
      * @param sosl a string containing the search to execute - e.g. "FIND
      *             {needle}"
