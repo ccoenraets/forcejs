@@ -452,8 +452,8 @@ class ForceService {
      * @param id return a specific reprot
      * @returns {*}
      */
-    reports(id=null) {
-        if (id) {
+    reports(id='') {
+        if (id !== '') {
             id = '/' + id;
         }
         return this.request(
@@ -468,8 +468,8 @@ class ForceService {
      * @param id return a specific dashboard
      * @returns {*}
      */
-    dashboard(id=null) {
-        if (id) {
+    dashboard(id='') {
+        if (id !== '') {
             id = '/' + id;
         }
         return this.request(
