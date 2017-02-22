@@ -658,6 +658,46 @@ service.retrieve('contact', id)
     });
 ```
 
+#### reports(recordId)
+
+Used to return reports
+
+- **recordId**. optional if empty it return all created reports.
+
+- **Return Value**: Promise
+
+Example:
+
+```
+service.reports()
+    .then(contact => {
+        console.log(reports);
+    })
+    .catch(error => {
+        console.log(error);
+    });
+```
+
+#### dasboard(recordId)
+
+Used to return dashboards
+
+- **recordId**. optional if empty it return all created dashboards.
+
+- **Return Value**: Promise
+
+Example:
+
+```
+service.dashboard()
+    .then(contact => {
+        console.log(reports);
+    })
+    .catch(error => {
+        console.log(error);
+    });
+```
+
 #### apexrest(urlMapping)
 
 Used to invoke a custom REST service endpoint implemented by your own Apex class.
