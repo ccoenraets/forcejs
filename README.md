@@ -93,7 +93,7 @@ Use the ECMAScript 5 compatible files available in the `dist` directory.
 <script>
     var oauth = force.OAuth.createInstance();
     oauth.login().then(function(oauthResult) {
-        force.DataService.createInstance(oauthResult));    
+        force.DataService.createInstance(oauthResult);    
     });
 
     function loadContacts() {
