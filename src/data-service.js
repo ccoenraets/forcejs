@@ -598,7 +598,9 @@ class ForceServiceCordova extends ForceService {
         if (networkPlugin) {
             return new Promise((resolve, reject) => {
                 let obj2 = this.computeEndPointIfMissing(obj.endPoint, obj.path);
-                obj.params.q = obj.params.q.replace(/[\n]/g, " ");
+                if (obj.params && obj.params.q && obj.params.q.replace) {
+                    obj.params.q = obj.params.q.replace(/[\n]/g, " ");
+                }
                 networkPlugin.sendRequest(
                     obj2.endPoint,
                     obj2.path,
