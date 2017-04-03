@@ -281,7 +281,7 @@ class ForceService {
         delete fields.id;
 
         return this.request({
-                method: "POST",
+                method: "PATCH",
                 contentType: "application/json",
                 path: "/services/data/" + this.apiVersion + "/sobjects/" + objectName + "/" + id,
                 params: {"_HttpMethod": "PATCH"},

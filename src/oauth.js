@@ -53,6 +53,10 @@ class OAuth {
     login() {
     }
 
+    loginGuest() {
+
+    }
+
 }
 
 class OAuthCordova extends OAuth{
