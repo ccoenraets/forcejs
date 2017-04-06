@@ -42,9 +42,9 @@ var force = (function () {
 
     // The force.com API version to use.
     // To override default, pass apiVersion in init(props)
-        apiVersion = 'v36.0',
+        apiVersion = 'v39.0',
 
-    // Keep track of OAuth data (access_token, refresh_token, and instance_url)
+    // Keep track of OAuth data (access_token, refresh_token, instance_url and user_id)
         oauth,
 
     // By default we store fbtoken in sessionStorage. This can be overridden in init()
@@ -83,7 +83,7 @@ var force = (function () {
         useProxy = (window.cordova || window.SfdcApp || window.sforce) ? false : true,
 
     // Where or not to use cordova for oauth and network calls
-        useCordova = window.cordova,
+        useCordova = window.cordova ? true : false,
 
     // Testing only
        requestHandler;
@@ -268,6 +268,11 @@ var force = (function () {
                 oauth.refresh_token = params.refreshToken;
             }
 
+            if (params.userId) {
+                if (!oauth) oauth = {};
+                oauth.user_id = params.userId;
+            }
+
             // Testing only - to set (or unset) requestHandler
             requestHandler = params.requestHandler;
         }
@@ -298,6 +303,8 @@ var force = (function () {
             queryString = url.substr(url.indexOf('#') + 1);
             obj = parseQueryString(queryString);
             oauth = obj;
+            // Paring out user id
+            oauth.user_id = oauth.id.split('/').pop();
             tokenStore.forceOAuth = JSON.stringify(oauth);
             if (loginSuccessHandler) {
                 loginSuccessHandler();
@@ -372,7 +379,7 @@ var force = (function () {
      * @returns {string} | undefined
      */
     function getUserId() {
-        return (typeof(oauth) !== 'undefined') ? oauth.id.split('/').pop() : undefined;
+        return (typeof(oauth) !== 'undefined') ? oauth.user_id : undefined;
     }
 
     /**
