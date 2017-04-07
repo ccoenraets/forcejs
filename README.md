@@ -580,6 +580,8 @@ Used to update a record
 
 - **valueObject**. Required. The object must include and Id (or id) field to identify the record to update.
 
+- **method**. Optional POST/PATCH
+
 - **Return Value**: Promise
 
 Example:
