@@ -270,8 +270,9 @@ class ForceService {
      * Convenience function to update a record. You can either pass the sobject returned by retrieve or query or a simple JavaScript object.
      * @param objectName
      * @param data The object to update. Must include the Id field.
+     * @param method In some cases a PATCH is needed instead of a POST
      */
-    update(objectName, data) {
+    update(objectName, data, method = 'POST') {
 
         let id = data.Id || data.id,
             fields = JSON.parse(JSON.stringify(data));
@@ -281,7 +282,7 @@ class ForceService {
         delete fields.id;
 
         return this.request({
-                method: "PATCH",
+                method: method,
                 contentType: "application/json",
                 path: "/services/data/" + this.apiVersion + "/sobjects/" + objectName + "/" + id,
                 params: {"_HttpMethod": "PATCH"},
