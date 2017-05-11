@@ -3,7 +3,7 @@
  * forcejs/data-service - Salesforce APIs data service module
  * Author: Christophe Coenraets @ccoenraets
  * Fork: David Hohl <david.hohl@capgemini.com>
- * Version: 2.0.2
+ * Version: 2.1.0
  */
 "use strict";
 
@@ -22,12 +22,16 @@ let joinPaths = (path1, path2) => {
     return path1 + path2;
 };
 
-let toQueryString = obj => {
+let toQueryString = (obj,encode=true) => {
     let parts = [],
         i;
     for (i in obj) {
         if (obj.hasOwnProperty(i)) {
-            parts.push(encodeURIComponent(i) + "=" + encodeURIComponent(obj[i]));
+            if (encode) {
+                parts.push(encodeURIComponent(i) + "=" + encodeURIComponent(obj[i]));
+            } else {
+                parts.push(i + "=" + obj[i]);
+            }
         }
     }
     return parts.join("&");
@@ -73,7 +77,7 @@ module.exports = {
         if (window.cordova) {
             instance = new ForceServiceCordova(oauth, options);
         } else {
-            instance =  new ForceServiceWeb(oauth, options);
+            instance = new ForceServiceWeb(oauth, options);
         }
         if (name) {
             namedInstances[name] = instance;
@@ -182,7 +186,7 @@ class ForceService {
                         resolve(xhr.responseText ? JSON.parse(xhr.responseText) : undefined);
                     } else if (xhr.status === 401 && this.refreshToken) {
                         this.refreshAccessToken()
-                            // Try again with the new token
+                        // Try again with the new token
                             .then(() => this.request(obj).then(data => resolve(data)).catch(error => reject(error)))
                             .catch(() => {
                                 reject(xhr);
@@ -220,12 +224,15 @@ class ForceService {
     /**
      * Convenience function to execute a SOQL query
      * @param soql
+     * @param batch
      */
-    query(soql) {
-        return this.request({
+    query(soql, batch = false) {
+        let r = {
             path: "/services/data/" + this.apiVersion + "/query",
             params: {q: soql}
-        })
+        };
+        if (batch) return this.batchTransaction(r);
+        return this.request(r);
     }
 
     /**
@@ -233,37 +240,45 @@ class ForceService {
      * @param objectName
      * @param id
      * @param fields
+     * @param batch
      */
-    retrieve(objectName, id, fields) {
-        return this.request({
-                path: "/services/data/" + this.apiVersion + "/sobjects/" + objectName + "/" + id,
-                params: fields ? {fields: (typeof fields === "string" ? fields : fields.join(","))} : undefined
-            });
+    retrieve(objectName, id, fields, batch = false) {
+        let r = {
+            path: "/services/data/" + this.apiVersion + "/sobjects/" + objectName + "/" + id,
+            params: fields ? {fields: (typeof fields === "string" ? fields : fields.join(","))} : undefined
+        };
+        if (batch) return this.batchTransaction(r);
+        return this.request(r);
     }
 
     /**
      * Convenience function to retrieve picklist values from a SalesForce Field
      * @param objectName
+     * @param batch
      */
-    getPickListValues(objectName) {
-        return this.request({
-                path: "/services/data/" + this.apiVersion + "/sobjects/" + objectName + "/describe"
-            }
-        );
+    getPickListValues(objectName, batch) {
+        let r = {
+            path: "/services/data/" + this.apiVersion + "/sobjects/" + objectName + "/describe"
+        };
+        if (batch) return this.batchTransaction(r);
+        return this.request(r);
     }
 
     /**
      * Convenience function to create a new record
      * @param objectName
      * @param data
+     * @param batch
      */
-    create(objectName, data) {
-        return this.request({
+    create(objectName, data, batch = false) {
+        let r = {
             method: "POST",
             contentType: "application/json",
             path: "/services/data/" + this.apiVersion + "/sobjects/" + objectName + "/",
             data: data
-        });
+        };
+        if (batch) return this.batchTransaction(r);
+        return this.request(r);
     }
 
     /**
@@ -271,8 +286,9 @@ class ForceService {
      * @param objectName
      * @param data The object to update. Must include the Id field.
      * @param method In some cases a PATCH is needed instead of a POST
+     * @param batch
      */
-    update(objectName, data, method = 'POST') {
+    update(objectName, data, method = 'POST', batch = false) {
 
         let id = data.Id || data.id,
             fields = JSON.parse(JSON.stringify(data));
@@ -281,27 +297,33 @@ class ForceService {
         delete fields.Id;
         delete fields.id;
 
-        return this.request({
-                method: method,
-                contentType: "application/json",
-                path: "/services/data/" + this.apiVersion + "/sobjects/" + objectName + "/" + id,
-                params: {"_HttpMethod": "PATCH"},
-                data: fields
-            }
-        );
+
+        let r = {
+            method: method,
+            contentType: "application/json",
+            path: "/services/data/" + this.apiVersion + "/sobjects/" + objectName + "/" + id,
+            params: {"_HttpMethod": "PATCH"},
+            data: fields
+        };
+
+        if (batch) return this.batchTransaction(r);
+        return this.request(r);
     };
 
     /**
      * Convenience function to delete a record
      * @param objectName
      * @param id
+     * @param batch
      */
-    del(objectName, id) {
-        return this.request({
-                method: "DELETE",
-                path: "/services/data/" + this.apiVersion + "/sobjects/" + objectName + "/" + id
-            }
-        );
+    del(objectName, id, batch = false) {
+        let r = {
+            method: "DELETE",
+            path: "/services/data/" + this.apiVersion + "/sobjects/" + objectName + "/" + id
+        };
+
+        if (batch) return this.batchTransaction(r);
+        return this.request(r);
     }
 
     /**
@@ -310,15 +332,18 @@ class ForceService {
      * @param externalIdField
      * @param externalId
      * @param data
+     * @param batch
      */
-    upsert(objectName, externalIdField, externalId, data) {
-        return this.request({
-                method: "PATCH",
-                contentType: "application/json",
-                path: "/services/data/" + this.apiVersion + "/sobjects/" + objectName + "/" + externalIdField + "/" + externalId,
-                data: data
-            }
-        );
+    upsert(objectName, externalIdField, externalId, data, batch = false) {
+        let r = {
+            method: "PATCH",
+            contentType: "application/json",
+            path: "/services/data/" + this.apiVersion + "/sobjects/" + objectName + "/" + externalIdField + "/" + externalId,
+            data: data
+        };
+
+        if (batch) return this.batchTransaction(r);
+        return this.request(r);
     }
 
     /**
@@ -353,8 +378,9 @@ class ForceService {
     /**
      * Convenience function to invoke the Chatter API
      * @param pathOrParams
+     * @param batch
      */
-    chatter(pathOrParams) {
+    chatter(pathOrParams, batch = false) {
 
         let basePath = "/services/data/" + this.apiVersion + "/chatter";
         let params;
@@ -368,7 +394,10 @@ class ForceService {
             return new Promise((resolve, reject) => reject("You must specify a path for the request"));
         }
 
-        return this.request(params);
+        let r = params;
+
+        if (batch) return this.batchTransaction(r);
+        return this.request(r);
 
     }
 
@@ -388,96 +417,107 @@ class ForceService {
     /**
      * Lists available resources for the client's API version, including
      * resource name and URI.
+     * @param batch
      */
-    resources() {
-        return this.request(
-            {
-                path: "/services/data/" + this.apiVersion
-            }
-        );
+    resources(batch = false) {
+        let r = {
+            path: "/services/data/" + this.apiVersion
+        };
+        if (batch) return this.batchTransaction(r);
+        return this.request(r);
     }
 
     /**
      * Lists the available objects and their metadata for your organization's
      * data.
-     * @param successHandler
-     * @param errorHandler
+     * @param batch
      */
-    describeGlobal() {
-        return this.request(
-            {
-                path: "/services/data/" + this.apiVersion + "/sobjects"
-            }
-        );
+    describeGlobal(batch = false) {
+        let r = {
+            path: "/services/data/" + this.apiVersion + "/sobjects"
+        };
+
+        if (batch) return this.batchTransaction(r);
+        return this.request(r);
     }
 
     /**
      * Describes the individual metadata for the specified object.
      * @param objectName object name; e.g. "Account"
+     * @param batch
      */
-    metadata(objectName) {
-        return this.request(
-            {
-                path: "/services/data/" + this.apiVersion + "/sobjects/" + objectName
-            }
-        );
+    metadata(objectName, batch = false) {
+        let r = {
+            path: "/services/data/" + this.apiVersion + "/sobjects/" + objectName
+        };
+
+        if (batch) return this.batchTransaction(r);
+        return this.request(r);
     }
 
     /**
      * Completely describes the individual metadata at all levels for the
      * specified object.
      * @param objectName object name; e.g. "Account"
+     * @param batch
      */
-    describe(objectName) {
-        return this.request(
-            {
-                path: "/services/data/" + this.apiVersion + "/sobjects/" + objectName + "/describe"
-            }
-        );
+    describe(objectName, batch = false) {
+        let r = {
+            path: "/services/data/" + this.apiVersion + "/sobjects/" + objectName + "/describe"
+        };
+
+        if (batch) return this.batchTransaction(r);
+        return this.request(r);
     }
 
     /**
      * Fetches the layout configuration for a particular sobject name and record type id.
+     * @param batch
      */
-    describeLayout(objectName, recordTypeId) {
+    describeLayout(objectName, recordTypeId, batch = false) {
         recordTypeId = recordTypeId || "";
-        return this.request(
-            {
-                path: "/services/data/" + this.apiVersion + "/sobjects/" + objectName + "/describe/layouts/" + recordTypeId
-            }
-        );
+        let r = {
+            path: "/services/data/" + this.apiVersion + "/sobjects/" + objectName + "/describe/layouts/" + recordTypeId
+        };
+
+        if (batch) return this.batchTransaction(r);
+        return this.request(r);
     }
 
     /**
      * list all created reports
-     * @param id return a specific reprot
+     * @param id return a specific report
+     * @param batch
      * @returns {*}
      */
-    reports(id='') {
+    reports(id = '', batch = false) {
         if (id !== '') {
             id = '/' + id;
         }
-        return this.request(
-            {
-                path: "/services/data/" + this.apiVersion + "/analytics/reports" + id
-            }
-        );
+        let r = {
+            path: "/services/data/" + this.apiVersion + "/analytics/reports" + id
+        };
+
+        if (batch) return this.batchTransaction(r);
+        return this.request(r);
     }
 
     /**
      * Lists all created dashboard
      * @param id return a specific dashboard
+     * @param batch
      * @returns {*}
      */
-    dashboard(id='') {
+    dashboard(id = '', batch = false) {
         if (id !== '') {
             id = '/' + id;
         }
-        return this.request(
-            {
-                path: "/services/data/" + this.apiVersion + "/analytics/dashboards" + id
-            }
-        );
+        let r = {
+            path: "/services/data/" + this.apiVersion + "/analytics/dashboards" + id
+        };
+
+        if (batch) return this.batchTransaction(r);
+        return this.request(r);
     }
 
     /**
@@ -486,28 +526,72 @@ class ForceService {
      * in accordance with http://www.salesforce.com/us/developer/docs/api_rest/Content/dome_query.htm
      *
      * @param url - the url retrieved from nextRecordsUrl or prevRecordsUrl
+     * @param batch
      */
-    queryMore(url) {
+    queryMore(url, batch = false) {
 
         let obj = parseUrl(url);
-        return this.request(
-            {
-                path: obj.path,
-                params: obj.params
-            }
-        );
+        let r = {
+            path: obj.path,
+            params: obj.params
+        };
+
+        if (batch) return this.batchTransaction(r);
+        return this.request(r);
     }
 
     /**
      * Executes the specified SOSL search.
      * @param sosl a string containing the search to execute - e.g. "FIND
      *             {needle}"
+     * @param batch
      */
-    search(sosl) {
+    search(sosl, batch = false) {
+        let r = {
+            path: "/services/data/" + this.apiVersion + "/search",
+            params: {q: sosl}
+        };
+        if (batch) return this.batchTransaction(r);
+        return this.request(r);
+    }
+
+    /**
+     * return request object
+     * @param r
+     * @return {Promise}
+     */
+    batchTransaction(r) {
+        if (!r['method']) {
+            r['method'] = 'GET';
+        }
+
+        // dev friendly API: Add leading "/" if missing so url + path concat always works
+        if (r.path.charAt(0) !== "/") {
+            r.path = "/" + r.path;
+        }
+
+        r.url = r.path + "?" + toQueryString(r.params, false);
+
+        delete r.params;
+        delete r.path;
+
+        return new Promise((resolve, reject) => resolve(r));
+    }
+
+    /**
+     * execute batch rest calls
+     * @param requests
+     * @return {*}
+     */
+    batch(requests) {
         return this.request(
             {
-                path: "/services/data/" + this.apiVersion + "/search",
-                params: {q: sosl}
+                method: "POST",
+                contentType: "application/json",
+                path: "/services/data/" + this.apiVersion + "/composite/batch",
+                data: {
+                    "batchRequests": requests
+                }
             }
         );
     }
@@ -584,7 +668,7 @@ class ForceServiceCordova extends ForceService {
                     reject("Salesforce Mobile SDK OAuth plugin not available");
                     return;
                 }
-                oauthPlugin.authenticate( (response)=> {
+                oauthPlugin.authenticate((response) => {
                         this.accessToken = response.accessToken;
                         resolve();
                     },
@@ -608,15 +692,17 @@ class ForceServiceCordova extends ForceService {
      */
     computeEndPointIfMissing(endPoint, path) {
         if (endPoint !== undefined) {
-            return {endPoint:endPoint, path:path};
+            return {endPoint: endPoint, path: path};
         }
         else {
-            let parts = path.split("/").filter(function(s) { return s !== ""; });
+            let parts = path.split("/").filter(function (s) {
+                return s !== "";
+            });
             if (parts.length >= 2) {
-                return {endPoint: "/" + parts.slice(0,2).join("/"), path: "/" + parts.slice(2).join("/")};
+                return {endPoint: "/" + parts.slice(0, 2).join("/"), path: "/" + parts.slice(2).join("/")};
             }
             else {
-                return {endPoint: "", path:path};
+                return {endPoint: "", path: path};
             }
         }
     }
