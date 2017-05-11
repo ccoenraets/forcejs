@@ -855,7 +855,7 @@ Executes the specified SOSL search.
 
 #### batch(requests)
 
-Executes the specified SOSL search.
+Executes batch commands
 
 - requests: Promises from the other calls like
 
