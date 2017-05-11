@@ -862,8 +862,6 @@ Important note:
 In API version 34.0 and later, subrequests can be calls to the Limits, SObject, Query/QueryAll, Search, Connect,
 and Chatter resources. API version 35.0 adds the ability to use Actions resources.
 
-so you can not run update, create an other calls with the batch.
-
 
 - requests: Promises from the other calls like
 
