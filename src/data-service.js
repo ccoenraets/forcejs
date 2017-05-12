@@ -569,9 +569,17 @@ class ForceService {
         if (r.path.charAt(0) !== "/") {
             r.path = "/" + r.path;
         }
+        if (r.params) {
+            r.url = r.path + "?" + toQueryString(r.params, false);
+        } else {
+            r.url = r.path;
+        }
 
-        r.url = r.path + "?" + toQueryString(r.params, false);
-
+        // a composite call need “body” instead of “data”
+        if (r.hasOwnProperty('data')) {
+            r.body = r.data;
+            delete r.data;
+        }
         delete r.params;
         delete r.path;
 
@@ -591,6 +599,29 @@ class ForceService {
                 path: "/services/data/" + this.apiVersion + "/composite/batch",
                 data: {
                     "batchRequests": requests
+                }
+            }
+        );
+    }
+
+    /**
+     * execute composite call
+     * @param requests
+     * @returns {*}
+     */
+    composite(requests) {
+
+        // remove not used attributes
+        for(let i=0;i<requests.length;i++) {
+            delete requests[i]['contentType'];
+        }
+        return this.request(
+            {
+                method: "POST",
+                contentType: "application/json",
+                path: "/services/data/" + this.apiVersion + "/composite",
+                data: {
+                    "compositeRequest": requests
                 }
             }
         );

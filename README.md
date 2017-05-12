@@ -882,3 +882,6 @@ and Chatter resources. API version 35.0 adds the ability to use Actions resource
       });
     });
 ```
+
+#### composite(request)
+- request: Promises from the other calls like
