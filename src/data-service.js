@@ -596,6 +596,10 @@ class ForceService {
         // remove not used attributes
         for(let i=0;i<requests.length;i++) {
             delete requests[i]['contentType'];
+            if (requests[i].hasOwnProperty('body')) {
+                requests[i]['richInput'] = requests[i]['body'];
+                delete requests[i]['body'];
+            }
         }
 
         return this.request(
