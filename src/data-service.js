@@ -592,6 +592,12 @@ class ForceService {
      * @return {*}
      */
     batch(requests) {
+
+        // remove not used attributes
+        for(let i=0;i<requests.length;i++) {
+            delete requests[i]['contentType'];
+        }
+
         return this.request(
             {
                 method: "POST",
