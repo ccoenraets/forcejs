@@ -22,7 +22,7 @@ let joinPaths = (path1, path2) => {
     return path1 + path2;
 };
 
-let toQueryString = (obj,encode=true) => {
+let toQueryString = (obj, encode = true) => {
     let parts = [],
         i;
     for (i in obj) {
@@ -594,7 +594,7 @@ class ForceService {
     batch(requests) {
 
         // remove not used attributes
-        for(let i=0;i<requests.length;i++) {
+        for (let i = 0; i < requests.length; i++) {
             delete requests[i]['contentType'];
             if (requests[i].hasOwnProperty('body')) {
                 requests[i]['richInput'] = requests[i]['body'];
@@ -617,24 +617,41 @@ class ForceService {
     /**
      * execute composite call
      * @param requests
+     * @param treeObject execute composite tree call, treeObject have to be the object name
      * @returns {*}
      */
-    composite(requests) {
+    composite(requests, treeObject = '') {
 
         // remove not used attributes
-        for(let i=0;i<requests.length;i++) {
+        for (let i = 0; i < requests.length; i++) {
             delete requests[i]['contentType'];
         }
-        return this.request(
-            {
-                method: "POST",
-                contentType: "application/json",
-                path: "/services/data/" + this.apiVersion + "/composite",
-                data: {
-                    "compositeRequest": requests
+
+        if (treeObject) {
+            return this.request(
+                {
+                    method: "POST",
+                    contentType: "application/json",
+                    path: "/services/data/" + this.apiVersion + "/composite/tree/" + treeObject + '/',
+                    data: {
+                        "records": requests
+                    }
                 }
-            }
-        );
+            );
+        } else {
+            return this.request(
+                {
+                    method: "POST",
+                    contentType: "application/json",
+                    path: "/services/data/" + this.apiVersion + "/composite",
+                    data: {
+                        "compositeRequest": requests
+                    }
+                }
+            );
+        }
+
+
     }
 
 }
