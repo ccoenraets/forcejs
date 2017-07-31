@@ -1,1 +1,1190 @@
-!function(e,t){"object"==typeof exports&&"object"==typeof module?module.exports=t():"function"==typeof define&&define.amd?define([],t):"object"==typeof exports?exports.force=t():e.force=t()}(this,function(){return function(e){function t(r){if(n[r])return n[r].exports;var o=n[r]={exports:{},id:r,loaded:!1};return e[r].call(o.exports,o,o.exports,t),o.loaded=!0,o.exports}var n={};return t.m=e,t.c=n,t.p="",t(0)}([function(e,t,n){"use strict";e.exports={OAuth:n(1),DataService:n(2)}},function(e,t){"use strict";function n(e,t){if(!e)throw new ReferenceError("this hasn't been initialised - super() hasn't been called");return!t||"object"!=typeof t&&"function"!=typeof t?e:t}function r(e,t){if("function"!=typeof t&&null!==t)throw new TypeError("Super expression must either be null or a function, not "+typeof t);e.prototype=Object.create(t&&t.prototype,{constructor:{value:e,enumerable:!1,writable:!0,configurable:!0}}),t&&(Object.setPrototypeOf?Object.setPrototypeOf(e,t):e.__proto__=t)}function o(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}var a=function(){function e(e,t){for(var n=0;n<t.length;n++){var r=t[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(e,r.key,r)}}return function(t,n,r){return n&&e(t.prototype,n),r&&e(t,r),t}}(),i=0,s=window.location.pathname.substring(0,window.location.pathname.lastIndexOf("/")),c=window.location.protocol+"//"+window.location.hostname+(window.location.port?":"+window.location.port:""),u=c+s,h=void 0,p=function(e){var t={},n=e.indexOf("#");if(n>-1){var r=decodeURIComponent(e.substr(n+1)),o=r.split("&");o.forEach(function(e){var n=e.split("=");t[n[0]]=n[1]})}return t};e.exports={createInstance:function(e,t,n){return window.cordova?new d(e,t,n):new f(e,t,n)}};var l=function(){function e(t,n,r){o(this,e),i+=1,this.instanceId=i,this.appId=t||"3MVG9fMtCkV6eLheIEZplMqWfnGlf3Y.BcWdOf1qytXo9zxgbsrUbS.ExHTgUPJeb3jZeT8NYhc.hMyznKU92",this.loginURL=n||"https://login.salesforce.com",this.oauthCallbackURL=r||u+"/oauthcallback.html"}return a(e,[{key:"login",value:function(){}},{key:"loginGuest",value:function(){}}]),e}(),d=function(e){function t(){return o(this,t),n(this,(t.__proto__||Object.getPrototypeOf(t)).apply(this,arguments))}return r(t,e),a(t,[{key:"login",value:function(){return new Promise(function(e,t){document.addEventListener("deviceready",function(){return(h=cordova.require("com.salesforce.plugin.oauth"))?void h.getAuthCredentials(function(t){e({accessToken:t.accessToken,instanceURL:t.instanceUrl,refreshToken:t.refreshToken,userId:t.userId})},function(e){console.log(e),t(e)}):(console.error("Salesforce Mobile SDK OAuth plugin not available"),void t("Salesforce Mobile SDK OAuth plugin not available"))},!1)})}}]),t}(l),f=function(e){function t(){return o(this,t),n(this,(t.__proto__||Object.getPrototypeOf(t)).apply(this,arguments))}return r(t,e),a(t,[{key:"login",value:function(){var e=this;return new Promise(function(t,n){console.log("loginURL: "+e.loginURL),console.log("oauthCallbackURL: "+e.oauthCallbackURL),document.addEventListener("oauthCallback",function(r){var o=r.detail,a=p(o);a.state==e.instanceId&&(a.access_token?t({appId:e.appId,accessToken:a.access_token,instanceURL:a.instance_url,refreshToken:a.refresh_token,userId:a.id.split("/").pop()}):n(a))});var r=e.loginURL+("/services/oauth2/authorize?client_id="+e.appId+"&redirect_uri="+e.oauthCallbackURL+"&response_type=token&state="+e.instanceId);window.open(r,"_blank","location=no")})}}]),t}(l)},function(e,t){"use strict";function n(e,t){if(!e)throw new ReferenceError("this hasn't been initialised - super() hasn't been called");return!t||"object"!=typeof t&&"function"!=typeof t?e:t}function r(e,t){if("function"!=typeof t&&null!==t)throw new TypeError("Super expression must either be null or a function, not "+typeof t);e.prototype=Object.create(t&&t.prototype,{constructor:{value:e,enumerable:!1,writable:!0,configurable:!0}}),t&&(Object.setPrototypeOf?Object.setPrototypeOf(e,t):e.__proto__=t)}function o(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}var a=function e(t,n,r){null===t&&(t=Function.prototype);var o=Object.getOwnPropertyDescriptor(t,n);if(void 0===o){var a=Object.getPrototypeOf(t);return null===a?void 0:e(a,n,r)}if("value"in o)return o.value;var i=o.get;if(void 0!==i)return i.call(r)},i=function(){function e(e,t){for(var n=0;n<t.length;n++){var r=t[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(e,r.key,r)}}return function(t,n,r){return n&&e(t.prototype,n),r&&e(t,r),t}}(),s=window.location.pathname.substring(0,window.location.pathname.lastIndexOf("/")),c=window.location.protocol+"//"+window.location.hostname+(window.location.port?":"+window.location.port:""),u=c+s,h=function(e,t){return"/"!==e.charAt(e.length-1)&&(e+="/"),"/"===t.charAt(0)&&(t=t.substr(1)),e+t},p=function(e){var t=!(arguments.length>1&&void 0!==arguments[1])||arguments[1],n=[],r=void 0;for(r in e)e.hasOwnProperty(r)&&(t?n.push(encodeURIComponent(r)+"="+encodeURIComponent(e[r])):n.push(r+"="+e[r]));return n.join("&")},l=function(e){var t=e.match(/^(https?\:)\/\/(([^:\/?#]*)(?:\:([0-9]+))?)([^?#]*)(\?[^#]*|)(#.*|)$/);return t&&{protocol:t[1],host:t[2],hostname:t[3],port:t[4],path:t[5],params:parseQueryString(t[6]),hash:t[7]}},d=void 0,f={},v=void 0;document.addEventListener("deviceready",function(){try{v=cordova.require("com.salesforce.plugin.network")}catch(e){}},!1),e.exports={createInstance:function(e,t,n){var r=void 0;return r=window.cordova?new g(e,t):new b(e,t),n?f[n]=r:d=r,r},getInstance:function(e){return e?f[e]:d}};var y=function(){function e(){var t=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{},n=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{};o(this,e),this.appId=t.appId,this.accessToken=t.accessToken,this.instanceURL=t.instanceURL,this.refreshToken=t.refreshToken,this.userId=t.userId,this.apiVersion=n.apiVersion||"v36.0",this.loginURL=n.loginURL||"https://login.salesforce.com",this.useProxy=!(n.useProxy||window.cordova||window.SfdcApp||window.sforce),this.proxyURL=n.proxyURL||u}return i(e,[{key:"getRequestBaseURL",value:function(){var e=void 0;return e=this.useProxy?this.proxyURL:this.instanceURL?this.instanceURL:c,"/"===e.slice(-1)&&(e=e.slice(0,-1)),e}},{key:"refreshAccessToken",value:function(){}},{key:"getUserId",value:function(){return this.userId}},{key:"request",value:function(e){var t=this;return new Promise(function(n,r){if(!t.accessToken&&!t.refreshToken)return void("function"==typeof errorHandler&&r("No access token. Login and try again."));var o=e.method||"GET",a=new XMLHttpRequest,i=t.getRequestBaseURL();if("/"!==e.path.charAt(0)&&(e.path="/"+e.path),i+=e.path,e.params&&(i+="?"+p(e.params)),a.onreadystatechange=function(){4===a.readyState&&(a.status>199&&a.status<300?n(a.responseText?JSON.parse(a.responseText):void 0):401===a.status&&t.refreshToken?t.refreshAccessToken().then(function(){return t.request(e).then(function(e){return n(e)}).catch(function(e){return r(e)})}).catch(function(){r(a)}):r(a))},a.open(o,i,!0),a.setRequestHeader("Accept","application/json"),a.setRequestHeader("Authorization","Bearer "+t.accessToken),a.setRequestHeader("Cache-Control","no-store"),a.setRequestHeader("X-Connect-Bearer-Urls",!0),e.contentType&&a.setRequestHeader("Content-Type",e.contentType),e.headerParams)for(var s in e.headerParams.getOwnPropertyNames()){var c=e.headerParams[s];a.setRequestHeader(s,c)}t.useProxy&&a.setRequestHeader("Target-URL",t.instanceURL),a.send(e.data?JSON.stringify(e.data):void 0)})}},{key:"query",value:function(e){var t=arguments.length>1&&void 0!==arguments[1]&&arguments[1],n={path:"/services/data/"+this.apiVersion+"/query",params:{q:e}};return t?this.batchTransaction(n):this.request(n)}},{key:"retrieve",value:function(e,t,n){var r=arguments.length>3&&void 0!==arguments[3]&&arguments[3],o={path:"/services/data/"+this.apiVersion+"/sobjects/"+e+"/"+t,params:n?{fields:"string"==typeof n?n:n.join(",")}:void 0};return r?this.batchTransaction(o):this.request(o)}},{key:"getPickListValues",value:function(e,t){var n={path:"/services/data/"+this.apiVersion+"/sobjects/"+e+"/describe"};return t?this.batchTransaction(n):this.request(n)}},{key:"create",value:function(e,t){var n=arguments.length>2&&void 0!==arguments[2]&&arguments[2],r={method:"POST",contentType:"application/json",path:"/services/data/"+this.apiVersion+"/sobjects/"+e+"/",data:t};return n?this.batchTransaction(r):this.request(r)}},{key:"update",value:function(e,t){var n=arguments.length>2&&void 0!==arguments[2]?arguments[2]:"POST",r=arguments.length>3&&void 0!==arguments[3]&&arguments[3],o=t.Id||t.id,a=JSON.parse(JSON.stringify(t));delete a.attributes,delete a.Id,delete a.id;var i={method:n,contentType:"application/json",path:"/services/data/"+this.apiVersion+"/sobjects/"+e+"/"+o,params:{_HttpMethod:"PATCH"},data:a};return r?this.batchTransaction(i):this.request(i)}},{key:"del",value:function(e,t){var n=arguments.length>2&&void 0!==arguments[2]&&arguments[2],r={method:"DELETE",path:"/services/data/"+this.apiVersion+"/sobjects/"+e+"/"+t};return n?this.batchTransaction(r):this.request(r)}},{key:"upsert",value:function(e,t,n,r){var o=arguments.length>4&&void 0!==arguments[4]&&arguments[4],a={method:"PATCH",contentType:"application/json",path:"/services/data/"+this.apiVersion+"/sobjects/"+e+"/"+t+"/"+n,data:r};return o?this.batchTransaction(a):this.request(a)}},{key:"apexrest",value:function(e){var t=void 0;return"string"==typeof e?t={path:e,method:"GET"}:(t=e,"/"!==t.path.charAt(0)&&(t.path="/"+t.path),"/services/apexrest"!==t.path.substr(0,18)&&(t.path="/services/apexrest"+t.path)),t.contentType||(t.contentType="DELETE"==t.method||"GET"==t.method?null:"application/json"),this.request(t)}},{key:"chatter",value:function(e){var t=arguments.length>1&&void 0!==arguments[1]&&arguments[1],n="/services/data/"+this.apiVersion+"/chatter",r=void 0;if(e&&e.substring)r={path:h(n,e)};else{if(!e||!e.path)return new Promise(function(e,t){return t("You must specify a path for the request")});r=e,r.path=h(n,e.path)}var o=r;return t?this.batchTransaction(o):this.request(o)}},{key:"versions",value:function(){return this.request({path:"/services/data/"})}},{key:"resources",value:function(){var e=arguments.length>0&&void 0!==arguments[0]&&arguments[0],t={path:"/services/data/"+this.apiVersion};return e?this.batchTransaction(t):this.request(t)}},{key:"describeGlobal",value:function(){var e=arguments.length>0&&void 0!==arguments[0]&&arguments[0],t={path:"/services/data/"+this.apiVersion+"/sobjects"};return e?this.batchTransaction(t):this.request(t)}},{key:"metadata",value:function(e){var t=arguments.length>1&&void 0!==arguments[1]&&arguments[1],n={path:"/services/data/"+this.apiVersion+"/sobjects/"+e};return t?this.batchTransaction(n):this.request(n)}},{key:"describe",value:function(e){var t=arguments.length>1&&void 0!==arguments[1]&&arguments[1],n={path:"/services/data/"+this.apiVersion+"/sobjects/"+e+"/describe"};return t?this.batchTransaction(n):this.request(n)}},{key:"describeLayout",value:function(e,t){var n=arguments.length>2&&void 0!==arguments[2]&&arguments[2];t=t||"";var r={path:"/services/data/"+this.apiVersion+"/sobjects/"+e+"/describe/layouts/"+t};return n?this.batchTransaction(r):this.request(r)}},{key:"reports",value:function(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:"",t=arguments.length>1&&void 0!==arguments[1]&&arguments[1];""!==e&&(e="/"+e);var n={path:"/services/data/"+this.apiVersion+"/analytics/reports"+e};return t?this.batchTransaction(n):this.request(n)}},{key:"dashboard",value:function(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:"",t=arguments.length>1&&void 0!==arguments[1]&&arguments[1];""!==e&&(e="/"+e);var n={path:"/services/data/"+this.apiVersion+"/analytics/dashboards"+e};return t?this.batchTransaction(n):this.request(n)}},{key:"queryMore",value:function(e){var t=arguments.length>1&&void 0!==arguments[1]&&arguments[1],n=l(e),r={path:n.path,params:n.params};return t?this.batchTransaction(r):this.request(r)}},{key:"search",value:function(e){var t=arguments.length>1&&void 0!==arguments[1]&&arguments[1],n={path:"/services/data/"+this.apiVersion+"/search",params:{q:e}};return t?this.batchTransaction(n):this.request(n)}},{key:"batchTransaction",value:function(e){return e.method||(e.method="GET"),"/"!==e.path.charAt(0)&&(e.path="/"+e.path),e.params?e.url=e.path+"?"+p(e.params,!1):e.url=e.path,e.hasOwnProperty("data")&&(e.body=e.data,delete e.data),delete e.params,delete e.path,new Promise(function(t,n){return t(e)})}},{key:"batch",value:function(e){for(var t=0;t<e.length;t++)delete e[t].contentType,e[t].hasOwnProperty("body")&&(e[t].richInput=e[t].body,delete e[t].body);return this.request({method:"POST",contentType:"application/json",path:"/services/data/"+this.apiVersion+"/composite/batch",data:{batchRequests:e}})}},{key:"composite",value:function(e){for(var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:"",n=0;n<e.length;n++)delete e[n].contentType;return t?this.request({method:"POST",contentType:"application/json",path:"/services/data/"+this.apiVersion+"/composite/tree/"+t+"/",data:{records:e}}):this.request({method:"POST",contentType:"application/json",path:"/services/data/"+this.apiVersion+"/composite",data:{compositeRequest:e}})}}]),e}(),b=function(e){function t(){return o(this,t),n(this,(t.__proto__||Object.getPrototypeOf(t)).apply(this,arguments))}return r(t,e),i(t,[{key:"refreshAccessToken",value:function(){var e=this;return new Promise(function(t,n){if(!e.refreshToken)return console.log("Missing refreshToken"),void n("Missing refreshToken");if(!e.appId)return console.log("Missing appId"),void n("Missing appId");var r=new XMLHttpRequest,o={grant_type:"refresh_token",refresh_token:e.refreshToken,client_id:e.appId},a=e.useProxy?e.proxyURL:e.loginURL;a=a+"/services/oauth2/token?"+p(o),r.onreadystatechange=function(){if(4===r.readyState)if(200===r.status){console.log("Token refreshed");var o=JSON.parse(r.responseText);e.accessToken=o.access_token,t()}else console.log("Error while trying to refresh token: "+r.responseText),n()},r.open("POST",a,!0),e.useProxy||r.setRequestHeader("Target-URL",e.loginURL),r.send()})}}]),t}(y),g=function(e){function t(){return o(this,t),n(this,(t.__proto__||Object.getPrototypeOf(t)).apply(this,arguments))}return r(t,e),i(t,[{key:"refreshAccessToken",value:function(){var e=this;return new Promise(function(t,n){document.addEventListener("deviceready",function(){var r=void 0;try{r=cordova.require("com.salesforce.plugin.oauth")}catch(e){}return r?void r.authenticate(function(n){e.accessToken=n.accessToken,t()},function(){console.error("Error refreshing oauth access token using the oauth plugin"),n()}):(console.error("Salesforce Mobile SDK OAuth plugin not available"),void n("Salesforce Mobile SDK OAuth plugin not available"))},!1)})}},{key:"computeEndPointIfMissing",value:function(e,t){if(void 0!==e)return{endPoint:e,path:t};var n=t.split("/").filter(function(e){return""!==e});return n.length>=2?{endPoint:"/"+n.slice(0,2).join("/"),path:"/"+n.slice(2).join("/")}:{endPoint:"",path:t}}},{key:"request",value:function(e){var n=this;return v?new Promise(function(t,r){var o=n.computeEndPointIfMissing(e.endPoint,e.path);void 0===e.params&&(e.params={}),"q"in e.params&&(e.params.q=e.params.q.replace(/[\n]/g," ")),v.sendRequest(o.endPoint,o.path,t,r,e.method,e.data||e.params,e.headerParams)}):a(t.prototype.__proto__||Object.getPrototypeOf(t.prototype),"request",this).call(this,e)}}]),t}(y)}])});
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(typeof exports === 'object' && typeof module === 'object')
+		module.exports = factory();
+	else if(typeof define === 'function' && define.amd)
+		define([], factory);
+	else if(typeof exports === 'object')
+		exports["force"] = factory();
+	else
+		root["force"] = factory();
+})(this, function() {
+return /******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId])
+/******/ 			return installedModules[moduleId].exports;
+
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			exports: {},
+/******/ 			id: moduleId,
+/******/ 			loaded: false
+/******/ 		};
+
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+
+/******/ 		// Flag the module as loaded
+/******/ 		module.loaded = true;
+
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+
+
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(0);
+/******/ })
+/************************************************************************/
+/******/ ([
+/* 0 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	module.exports = {
+		OAuth: __webpack_require__(1),
+		DataService: __webpack_require__(2)
+	};
+
+/***/ },
+/* 1 */
+/***/ function(module, exports) {
+
+	/**
+	 * forcejs - REST toolkit for Salesforce.com
+	 * forcejs/oauth - OAuth User Agent Workflow module
+	 * Author: Christophe Coenraets @ccoenraets
+	 * Version: 2.0.1
+	 */
+	"use strict";
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var instanceCounter = 0;
+
+	// if page URL is http://localhost:3000/myapp/index.html, context is /myapp
+	var context = window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/"));
+
+	// if page URL is http://localhost:3000/myapp/index.html, serverURL is http://localhost:3000
+	var serverURL = window.location.protocol + "//" + window.location.hostname + (window.location.port ? ":" + window.location.port : "");
+
+	// if page URL is http://localhost:3000/myapp/index.html, baseURL is http://localhost:3000/myapp
+	var baseURL = serverURL + context;
+
+	// Reference to the Salesforce OAuth plugin
+	var oauthPlugin = void 0;
+
+	var getQueryStringAsObject = function getQueryStringAsObject(url) {
+	    var obj = {};
+	    var index = url.indexOf("#");
+	    if (index > -1) {
+	        var queryString = decodeURIComponent(url.substr(index + 1));
+	        var params = queryString.split("&");
+	        params.forEach(function (param) {
+	            var splitter = param.split("=");
+	            obj[splitter[0]] = splitter[1];
+	        });
+	    }
+	    return obj;
+	};
+
+	module.exports = {
+	    createInstance: function createInstance(appId, loginURL, oauthCallbackURL) {
+	        return window.cordova ? new OAuthCordova(appId, loginURL, oauthCallbackURL) : new OAuthWeb(appId, loginURL, oauthCallbackURL);
+	    }
+	};
+
+	var OAuth = function () {
+	    function OAuth(appId, loginURL, oauthCallbackURL) {
+	        _classCallCheck(this, OAuth);
+
+	        instanceCounter = instanceCounter + 1;
+	        this.instanceId = instanceCounter;
+	        this.appId = appId || "3MVG9fMtCkV6eLheIEZplMqWfnGlf3Y.BcWdOf1qytXo9zxgbsrUbS.ExHTgUPJeb3jZeT8NYhc.hMyznKU92";
+	        this.loginURL = loginURL || "https://login.salesforce.com";
+	        this.oauthCallbackURL = oauthCallbackURL || baseURL + "/oauthcallback.html";
+	    }
+
+	    _createClass(OAuth, [{
+	        key: "login",
+	        value: function login() {}
+	    }, {
+	        key: "loginGuest",
+	        value: function loginGuest() {}
+	    }]);
+
+	    return OAuth;
+	}();
+
+	var OAuthCordova = function (_OAuth) {
+	    _inherits(OAuthCordova, _OAuth);
+
+	    function OAuthCordova() {
+	        _classCallCheck(this, OAuthCordova);
+
+	        return _possibleConstructorReturn(this, (OAuthCordova.__proto__ || Object.getPrototypeOf(OAuthCordova)).apply(this, arguments));
+	    }
+
+	    _createClass(OAuthCordova, [{
+	        key: "login",
+	        value: function login() {
+	            return new Promise(function (resolve, reject) {
+	                document.addEventListener("deviceready", function () {
+	                    oauthPlugin = cordova.require("com.salesforce.plugin.oauth");
+	                    if (!oauthPlugin) {
+	                        console.error("Salesforce Mobile SDK OAuth plugin not available");
+	                        reject("Salesforce Mobile SDK OAuth plugin not available");
+	                        return;
+	                    }
+	                    oauthPlugin.getAuthCredentials(function (creds) {
+	                        resolve({
+	                            accessToken: creds.accessToken,
+	                            instanceURL: creds.instanceUrl,
+	                            refreshToken: creds.refreshToken,
+	                            userId: creds.userId
+	                        });
+	                    }, function (error) {
+	                        console.log(error);
+	                        reject(error);
+	                    });
+	                }, false);
+	            });
+	        }
+	    }]);
+
+	    return OAuthCordova;
+	}(OAuth);
+
+	var OAuthWeb = function (_OAuth2) {
+	    _inherits(OAuthWeb, _OAuth2);
+
+	    function OAuthWeb() {
+	        _classCallCheck(this, OAuthWeb);
+
+	        return _possibleConstructorReturn(this, (OAuthWeb.__proto__ || Object.getPrototypeOf(OAuthWeb)).apply(this, arguments));
+	    }
+
+	    _createClass(OAuthWeb, [{
+	        key: "login",
+	        value: function login() {
+	            var _this3 = this;
+
+	            return new Promise(function (resolve, reject) {
+
+	                console.log("loginURL: " + _this3.loginURL);
+	                console.log("oauthCallbackURL: " + _this3.oauthCallbackURL);
+
+	                document.addEventListener("oauthCallback", function (event) {
+
+	                    var url = event.detail,
+	                        oauthResult = getQueryStringAsObject(url);
+
+	                    if (oauthResult.state == _this3.instanceId) {
+
+	                        if (oauthResult.access_token) {
+	                            resolve({
+	                                appId: _this3.appId,
+	                                accessToken: oauthResult.access_token,
+	                                instanceURL: oauthResult.instance_url,
+	                                refreshToken: oauthResult.refresh_token,
+	                                userId: oauthResult.id.split("/").pop()
+	                            });
+	                        } else {
+	                            reject(oauthResult);
+	                        }
+	                    }
+	                });
+
+	                var loginWindowURL = _this3.loginURL + ("/services/oauth2/authorize?client_id=" + _this3.appId + "&redirect_uri=" + _this3.oauthCallbackURL + "&response_type=token&state=" + _this3.instanceId);
+	                window.open(loginWindowURL, "_blank", "location=no");
+	            });
+	        }
+	    }]);
+
+	    return OAuthWeb;
+	}(OAuth);
+
+/***/ },
+/* 2 */
+/***/ function(module, exports) {
+
+	/**
+	 * forcejs - REST toolkit for Salesforce.com
+	 * forcejs/data-service - Salesforce APIs data service module
+	 * Author: Christophe Coenraets @ccoenraets
+	 * Fork: David Hohl <david.hohl@capgemini.com>
+	 * Version: 2.1.0
+	 */
+	"use strict";
+
+	// if page URL is http://localhost:3000/myapp/index.html, context is /myapp
+
+	var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var context = window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/"));
+
+	// if page URL is http://localhost:3000/myapp/index.html, serverURL is http://localhost:3000
+	var serverURL = window.location.protocol + "//" + window.location.hostname + (window.location.port ? ":" + window.location.port : "");
+
+	// if page URL is http://localhost:3000/myapp/index.html, baseURL is http://localhost:3000/myapp
+	var baseURL = serverURL + context;
+
+	var joinPaths = function joinPaths(path1, path2) {
+	    if (path1.charAt(path1.length - 1) !== "/") path1 = path1 + "/";
+	    if (path2.charAt(0) === "/") path2 = path2.substr(1);
+	    return path1 + path2;
+	};
+
+	var toQueryString = function toQueryString(obj) {
+	    var encode = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+
+	    var parts = [],
+	        i = void 0;
+	    for (i in obj) {
+	        if (obj.hasOwnProperty(i)) {
+	            if (encode) {
+	                parts.push(encodeURIComponent(i) + "=" + encodeURIComponent(obj[i]));
+	            } else {
+	                parts.push(i + "=" + obj[i]);
+	            }
+	        }
+	    }
+	    return parts.join("&");
+	};
+
+	var parseUrl = function parseUrl(url) {
+	    var match = url.match(/^(https?\:)\/\/(([^:\/?#]*)(?:\:([0-9]+))?)([^?#]*)(\?[^#]*|)(#.*|)$/);
+	    return match && {
+	        protocol: match[1],
+	        host: match[2],
+	        hostname: match[3],
+	        port: match[4],
+	        path: match[5],
+	        params: parseQueryString(match[6]),
+	        hash: match[7]
+	    };
+	};
+
+	// Keeps track of single instance when instance is created with singleton form of createInstance:
+	// createInstance(oauth, options) with no third parameter (name of the instance)
+	var singleton = void 0;
+
+	// Keeps track of named instances when app needs data from multiple Salesforce orgs. For example:
+	// let org1 = ForceService.createInstance(oauth, options, "org1");
+	// let org2 = ForceService.createInstance(oauth, options, "org2");
+	var namedInstances = {};
+
+	// Reference to the Salesforce Network plugin
+	var networkPlugin = void 0;
+
+	document.addEventListener("deviceready", function () {
+	    try {
+	        networkPlugin = cordova.require("com.salesforce.plugin.network");
+	    } catch (e) {
+	        // fail silently
+	    }
+	}, false);
+
+	module.exports = {
+
+	    createInstance: function createInstance(oauth, options, name) {
+	        var instance = void 0;
+	        if (window.cordova) {
+	            instance = new ForceServiceCordova(oauth, options);
+	        } else {
+	            instance = new ForceServiceWeb(oauth, options);
+	        }
+	        if (name) {
+	            namedInstances[name] = instance;
+	        } else {
+	            singleton = instance;
+	        }
+	        return instance;
+	    },
+
+	    getInstance: function getInstance(name) {
+	        return name ? namedInstances[name] : singleton;
+	    }
+
+	};
+
+	var ForceService = function () {
+	    function ForceService() {
+	        var oauth = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+	        var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+	        _classCallCheck(this, ForceService);
+
+	        this.appId = oauth.appId; // Used in refreshAccessToken()
+	        this.accessToken = oauth.accessToken;
+	        this.instanceURL = oauth.instanceURL;
+	        this.refreshToken = oauth.refreshToken;
+	        this.userId = oauth.userId;
+
+	        this.apiVersion = options.apiVersion || "v36.0";
+	        this.loginURL = options.loginURL || "https://login.salesforce.com";
+
+	        // Whether or not to use a CORS proxy. Defaults to false if app running in Cordova, in a VF page,
+	        // or using the Salesforce console. Can be overriden in init()
+	        this.useProxy = options.useProxy || window.cordova || window.SfdcApp || window.sforce ? false : true;
+
+	        // Only required when using REST APIs in an app hosted on your own server to avoid cross domain policy issues
+	        // To override default, pass proxyURL in init(props)
+	        this.proxyURL = options.proxyURL || baseURL;
+	    }
+
+	    /**
+	     * Determines the request base URL.
+	     */
+
+
+	    _createClass(ForceService, [{
+	        key: "getRequestBaseURL",
+	        value: function getRequestBaseURL() {
+
+	            var url = void 0;
+
+	            if (this.useProxy) {
+	                url = this.proxyURL;
+	            } else if (this.instanceURL) {
+	                url = this.instanceURL;
+	            } else {
+	                url = serverURL;
+	            }
+
+	            // dev friendly API: Remove trailing "/" if any so url + path concat always works
+	            if (url.slice(-1) === "/") {
+	                url = url.slice(0, -1);
+	            }
+
+	            return url;
+	        }
+	    }, {
+	        key: "refreshAccessToken",
+	        value: function refreshAccessToken() {}
+	    }, {
+	        key: "getUserId",
+	        value: function getUserId() {
+	            return this.userId;
+	        }
+
+	        /**
+	         * Lets you make any Salesforce REST API request.
+	         * @param obj - Request configuration object. Can include:
+	         *  method:  HTTP method: GET, POST, etc. Optional - Default is "GET"
+	         *  path:    path in to the Salesforce endpoint - Required
+	         *  params:  queryString parameters as a map - Optional
+	         *  data:  JSON object to send in the request body - Optional
+	         */
+
+	    }, {
+	        key: "request",
+	        value: function request(obj) {
+	            var _this = this;
+
+	            return new Promise(function (resolve, reject) {
+
+	                if (!_this.accessToken && !_this.refreshToken) {
+	                    if (typeof errorHandler === "function") {
+	                        reject("No access token. Login and try again.");
+	                    }
+	                    return;
+	                }
+
+	                var method = obj.method || "GET",
+	                    xhr = new XMLHttpRequest(),
+	                    url = _this.getRequestBaseURL();
+
+	                // dev friendly API: Add leading "/" if missing so url + path concat always works
+	                if (obj.path.charAt(0) !== "/") {
+	                    obj.path = "/" + obj.path;
+	                }
+
+	                url = url + obj.path;
+
+	                if (obj.params) {
+	                    url += "?" + toQueryString(obj.params);
+	                }
+
+	                xhr.onreadystatechange = function () {
+	                    if (xhr.readyState === 4) {
+	                        if (xhr.status > 199 && xhr.status < 300) {
+	                            resolve(xhr.responseText ? JSON.parse(xhr.responseText) : undefined);
+	                        } else if (xhr.status === 401 && _this.refreshToken) {
+	                            _this.refreshAccessToken()
+	                            // Try again with the new token
+	                            .then(function () {
+	                                return _this.request(obj).then(function (data) {
+	                                    return resolve(data);
+	                                }).catch(function (error) {
+	                                    return reject(error);
+	                                });
+	                            }).catch(function () {
+	                                reject(xhr);
+	                            });
+	                        } else {
+	                            reject(xhr);
+	                        }
+	                    }
+	                };
+
+	                xhr.open(method, url, true);
+	                xhr.setRequestHeader("Accept", "application/json");
+	                xhr.setRequestHeader("Authorization", "Bearer " + _this.accessToken);
+	                xhr.setRequestHeader("Cache-Control", "no-store");
+	                // See http://www.salesforce.com/us/developer/docs/chatterapi/Content/intro_requesting_bearer_token_url.htm#kanchor36
+	                xhr.setRequestHeader("X-Connect-Bearer-Urls", true);
+
+	                if (obj.contentType) {
+	                    xhr.setRequestHeader("Content-Type", obj.contentType);
+	                }
+	                if (obj.headerParams) {
+	                    for (var headerName in obj.headerParams.getOwnPropertyNames()) {
+	                        var headerValue = obj.headerParams[headerName];
+	                        xhr.setRequestHeader(headerName, headerValue);
+	                    }
+	                }
+	                if (_this.useProxy) {
+	                    xhr.setRequestHeader("Target-URL", _this.instanceURL);
+	                }
+	                xhr.send(obj.data ? JSON.stringify(obj.data) : undefined);
+	            });
+	        }
+
+	        /**
+	         * Convenience function to execute a SOQL query
+	         * @param soql
+	         * @param batch
+	         */
+
+	    }, {
+	        key: "query",
+	        value: function query(soql) {
+	            var batch = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
+	            var r = {
+	                path: "/services/data/" + this.apiVersion + "/query",
+	                params: { q: soql }
+	            };
+	            if (batch) return this.batchTransaction(r);
+	            return this.request(r);
+	        }
+
+	        /**
+	         * Convenience function to execute a SOQL queryAll
+	         * @param soql
+	         * @param batch
+	         */
+
+	    }, {
+	        key: "queryAll",
+	        value: function queryAll(soql) {
+	            var batch = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
+	            var r = {
+	                path: "/services/data/" + this.apiVersion + "/queryAll",
+	                params: { q: soql }
+	            };
+	            if (batch) return this.batchTransaction(r);
+	            return this.request(r);
+	        }
+
+	        /**
+	         * Convenience function to retrieve a single record based on its Id
+	         * @param objectName
+	         * @param id
+	         * @param fields
+	         * @param batch
+	         */
+
+	    }, {
+	        key: "retrieve",
+	        value: function retrieve(objectName, id, fields) {
+	            var batch = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+
+	            var r = {
+	                path: "/services/data/" + this.apiVersion + "/sobjects/" + objectName + "/" + id,
+	                params: fields ? { fields: typeof fields === "string" ? fields : fields.join(",") } : undefined
+	            };
+	            if (batch) return this.batchTransaction(r);
+	            return this.request(r);
+	        }
+
+	        /**
+	         * Convenience function to retrieve picklist values from a SalesForce Field
+	         * @param objectName
+	         * @param batch
+	         */
+
+	    }, {
+	        key: "getPickListValues",
+	        value: function getPickListValues(objectName, batch) {
+	            var r = {
+	                path: "/services/data/" + this.apiVersion + "/sobjects/" + objectName + "/describe"
+	            };
+	            if (batch) return this.batchTransaction(r);
+	            return this.request(r);
+	        }
+
+	        /**
+	         * Convenience function to create a new record
+	         * @param objectName
+	         * @param data
+	         * @param batch
+	         */
+
+	    }, {
+	        key: "create",
+	        value: function create(objectName, data) {
+	            var batch = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
+	            var r = {
+	                method: "POST",
+	                contentType: "application/json",
+	                path: "/services/data/" + this.apiVersion + "/sobjects/" + objectName + "/",
+	                data: data
+	            };
+	            if (batch) return this.batchTransaction(r);
+	            return this.request(r);
+	        }
+
+	        /**
+	         * Convenience function to update a record. You can either pass the sobject returned by retrieve or query or a simple JavaScript object.
+	         * @param objectName
+	         * @param data The object to update. Must include the Id field.
+	         * @param method In some cases a PATCH is needed instead of a POST
+	         * @param batch
+	         */
+
+	    }, {
+	        key: "update",
+	        value: function update(objectName, data) {
+	            var method = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'POST';
+	            var batch = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+
+
+	            var id = data.Id || data.id,
+	                fields = JSON.parse(JSON.stringify(data));
+
+	            delete fields.attributes;
+	            delete fields.Id;
+	            delete fields.id;
+
+	            var r = {
+	                method: method,
+	                contentType: "application/json",
+	                path: "/services/data/" + this.apiVersion + "/sobjects/" + objectName + "/" + id,
+	                params: { "_HttpMethod": "PATCH" },
+	                data: fields
+	            };
+
+	            if (batch) return this.batchTransaction(r);
+	            return this.request(r);
+	        }
+	    }, {
+	        key: "del",
+
+
+	        /**
+	         * Convenience function to delete a record
+	         * @param objectName
+	         * @param id
+	         * @param batch
+	         */
+	        value: function del(objectName, id) {
+	            var batch = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
+	            var r = {
+	                method: "DELETE",
+	                path: "/services/data/" + this.apiVersion + "/sobjects/" + objectName + "/" + id
+	            };
+
+	            if (batch) return this.batchTransaction(r);
+	            return this.request(r);
+	        }
+
+	        /**
+	         * Convenience function to upsert a record
+	         * @param objectName
+	         * @param externalIdField
+	         * @param externalId
+	         * @param data
+	         * @param batch
+	         */
+
+	    }, {
+	        key: "upsert",
+	        value: function upsert(objectName, externalIdField, externalId, data) {
+	            var batch = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : false;
+
+	            var r = {
+	                method: "PATCH",
+	                contentType: "application/json",
+	                path: "/services/data/" + this.apiVersion + "/sobjects/" + objectName + "/" + externalIdField + "/" + externalId,
+	                data: data
+	            };
+
+	            if (batch) return this.batchTransaction(r);
+	            return this.request(r);
+	        }
+
+	        /**
+	         * Convenience function to invoke APEX REST endpoints
+	         * @param pathOrParams
+	         */
+
+	    }, {
+	        key: "apexrest",
+	        value: function apexrest(pathOrParams) {
+
+	            var obj = void 0;
+
+	            if (typeof pathOrParams === "string") {
+	                obj = { path: pathOrParams, method: "GET" };
+	            } else {
+	                obj = pathOrParams;
+
+	                if (obj.path.charAt(0) !== "/") {
+	                    obj.path = "/" + obj.path;
+	                }
+
+	                if (obj.path.substr(0, 18) !== "/services/apexrest") {
+	                    obj.path = "/services/apexrest" + obj.path;
+	                }
+	            }
+
+	            if (!obj.contentType) {
+	                obj.contentType = obj.method == "DELETE" || obj.method == "GET" ? null : "application/json";
+	            }
+
+	            return this.request(obj);
+	        }
+
+	        /**
+	         * Convenience function to invoke the Chatter API
+	         * @param pathOrParams
+	         * @param batch
+	         */
+
+	    }, {
+	        key: "chatter",
+	        value: function chatter(pathOrParams) {
+	            var batch = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
+
+	            var basePath = "/services/data/" + this.apiVersion + "/chatter";
+	            var params = void 0;
+
+	            if (pathOrParams && pathOrParams.substring) {
+	                params = { path: joinPaths(basePath, pathOrParams) };
+	            } else if (pathOrParams && pathOrParams.path) {
+	                params = pathOrParams;
+	                params.path = joinPaths(basePath, pathOrParams.path);
+	            } else {
+	                return new Promise(function (resolve, reject) {
+	                    return reject("You must specify a path for the request");
+	                });
+	            }
+
+	            var r = params;
+
+	            if (batch) return this.batchTransaction(r);
+	            return this.request(r);
+	        }
+
+	        /**
+	         * Lists summary information about each Salesforce.com version currently
+	         * available, including the version, label, and a link to each version's
+	         * root.
+	         */
+
+	    }, {
+	        key: "versions",
+	        value: function versions() {
+	            return this.request({
+	                path: "/services/data/"
+	            });
+	        }
+
+	        /**
+	         * Lists available resources for the client's API version, including
+	         * resource name and URI.
+	         * @param batch
+	         */
+
+	    }, {
+	        key: "resources",
+	        value: function resources() {
+	            var batch = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+
+	            var r = {
+	                path: "/services/data/" + this.apiVersion
+	            };
+	            if (batch) return this.batchTransaction(r);
+	            return this.request(r);
+	        }
+
+	        /**
+	         * Lists the available objects and their metadata for your organization's
+	         * data.
+	         * @param batch
+	         */
+
+	    }, {
+	        key: "describeGlobal",
+	        value: function describeGlobal() {
+	            var batch = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+
+	            var r = {
+	                path: "/services/data/" + this.apiVersion + "/sobjects"
+	            };
+
+	            if (batch) return this.batchTransaction(r);
+	            return this.request(r);
+	        }
+
+	        /**
+	         * Describes the individual metadata for the specified object.
+	         * @param objectName object name; e.g. "Account"
+	         * @param batch
+	         */
+
+	    }, {
+	        key: "metadata",
+	        value: function metadata(objectName) {
+	            var batch = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
+	            var r = {
+	                path: "/services/data/" + this.apiVersion + "/sobjects/" + objectName
+	            };
+
+	            if (batch) return this.batchTransaction(r);
+	            return this.request(r);
+	        }
+
+	        /**
+	         * Completely describes the individual metadata at all levels for the
+	         * specified object.
+	         * @param objectName object name; e.g. "Account"
+	         * @param batch
+	         */
+
+	    }, {
+	        key: "describe",
+	        value: function describe(objectName) {
+	            var batch = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
+	            var r = {
+	                path: "/services/data/" + this.apiVersion + "/sobjects/" + objectName + "/describe"
+	            };
+
+	            if (batch) return this.batchTransaction(r);
+	            return this.request(r);
+	        }
+
+	        /**
+	         * Fetches the layout configuration for a particular sobject name and record type id.
+	         * @param batch
+	         */
+
+	    }, {
+	        key: "describeLayout",
+	        value: function describeLayout(objectName, recordTypeId) {
+	            var batch = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
+	            recordTypeId = recordTypeId || "";
+	            var r = {
+	                path: "/services/data/" + this.apiVersion + "/sobjects/" + objectName + "/describe/layouts/" + recordTypeId
+	            };
+
+	            if (batch) return this.batchTransaction(r);
+	            return this.request(r);
+	        }
+
+	        /**
+	         * list all created reports
+	         * @param id return a specific report
+	         * @param batch
+	         * @returns {*}
+	         */
+
+	    }, {
+	        key: "reports",
+	        value: function reports() {
+	            var id = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+	            var batch = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
+	            if (id !== '') {
+	                id = '/' + id;
+	            }
+	            var r = {
+	                path: "/services/data/" + this.apiVersion + "/analytics/reports" + id
+	            };
+
+	            if (batch) return this.batchTransaction(r);
+	            return this.request(r);
+	        }
+
+	        /**
+	         * Lists all created dashboard
+	         * @param id return a specific dashboard
+	         * @param batch
+	         * @returns {*}
+	         */
+
+	    }, {
+	        key: "dashboard",
+	        value: function dashboard() {
+	            var id = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+	            var batch = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
+	            if (id !== '') {
+	                id = '/' + id;
+	            }
+	            var r = {
+	                path: "/services/data/" + this.apiVersion + "/analytics/dashboards" + id
+	            };
+
+	            if (batch) return this.batchTransaction(r);
+	            return this.request(r);
+	        }
+
+	        /**
+	         * Queries the next set of records based on pagination.
+	         * This should be used if performing a query that retrieves more than can be returned
+	         * in accordance with http://www.salesforce.com/us/developer/docs/api_rest/Content/dome_query.htm
+	         *
+	         * @param url - the url retrieved from nextRecordsUrl or prevRecordsUrl
+	         * @param batch
+	         */
+
+	    }, {
+	        key: "queryMore",
+	        value: function queryMore(url) {
+	            var batch = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
+
+	            var obj = parseUrl(url);
+	            var r = {
+	                path: obj.path,
+	                params: obj.params
+	            };
+
+	            if (batch) return this.batchTransaction(r);
+	            return this.request(r);
+	        }
+
+	        /**
+	         * Executes the specified SOSL search.
+	         * @param sosl a string containing the search to execute - e.g. "FIND
+	         *             {needle}"
+	         * @param batch
+	         */
+
+	    }, {
+	        key: "search",
+	        value: function search(sosl) {
+	            var batch = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
+	            var r = {
+	                path: "/services/data/" + this.apiVersion + "/search",
+	                params: { q: sosl }
+	            };
+	            if (batch) return this.batchTransaction(r);
+	            return this.request(r);
+	        }
+
+	        /**
+	         * return request object
+	         * @param r
+	         * @return {Promise}
+	         */
+
+	    }, {
+	        key: "batchTransaction",
+	        value: function batchTransaction(r) {
+	            if (!r['method']) {
+	                r['method'] = 'GET';
+	            }
+
+	            // dev friendly API: Add leading "/" if missing so url + path concat always works
+	            if (r.path.charAt(0) !== "/") {
+	                r.path = "/" + r.path;
+	            }
+	            if (r.params) {
+	                r.url = r.path + "?" + toQueryString(r.params, false);
+	            } else {
+	                r.url = r.path;
+	            }
+
+	            // a composite call need “body” instead of “data”
+	            if (r.hasOwnProperty('data')) {
+	                r.body = r.data;
+	                delete r.data;
+	            }
+	            delete r.params;
+	            delete r.path;
+
+	            return new Promise(function (resolve, reject) {
+	                return resolve(r);
+	            });
+	        }
+
+	        /**
+	         * execute batch rest calls
+	         * @param requests
+	         * @return {*}
+	         */
+
+	    }, {
+	        key: "batch",
+	        value: function batch(requests) {
+
+	            // remove not used attributes
+	            for (var i = 0; i < requests.length; i++) {
+	                delete requests[i]['contentType'];
+	                if (requests[i].hasOwnProperty('body')) {
+	                    requests[i]['richInput'] = requests[i]['body'];
+	                    delete requests[i]['body'];
+	                }
+	            }
+
+	            return this.request({
+	                method: "POST",
+	                contentType: "application/json",
+	                path: "/services/data/" + this.apiVersion + "/composite/batch",
+	                data: {
+	                    "batchRequests": requests
+	                }
+	            });
+	        }
+
+	        /**
+	         * execute composite call
+	         * @param requests
+	         * @param treeObject execute composite tree call, treeObject have to be the object name
+	         * @returns {*}
+	         */
+
+	    }, {
+	        key: "composite",
+	        value: function composite(requests) {
+	            var treeObject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+
+
+	            // remove not used attributes
+	            for (var i = 0; i < requests.length; i++) {
+	                delete requests[i]['contentType'];
+	            }
+
+	            if (treeObject) {
+	                return this.request({
+	                    method: "POST",
+	                    contentType: "application/json",
+	                    path: "/services/data/" + this.apiVersion + "/composite/tree/" + treeObject + '/',
+	                    data: {
+	                        "records": requests
+	                    }
+	                });
+	            } else {
+	                return this.request({
+	                    method: "POST",
+	                    contentType: "application/json",
+	                    path: "/services/data/" + this.apiVersion + "/composite",
+	                    data: {
+	                        "compositeRequest": requests
+	                    }
+	                });
+	            }
+	        }
+	    }]);
+
+	    return ForceService;
+	}();
+
+	var ForceServiceWeb = function (_ForceService) {
+	    _inherits(ForceServiceWeb, _ForceService);
+
+	    function ForceServiceWeb() {
+	        _classCallCheck(this, ForceServiceWeb);
+
+	        return _possibleConstructorReturn(this, (ForceServiceWeb.__proto__ || Object.getPrototypeOf(ForceServiceWeb)).apply(this, arguments));
+	    }
+
+	    _createClass(ForceServiceWeb, [{
+	        key: "refreshAccessToken",
+	        value: function refreshAccessToken() {
+	            var _this3 = this;
+
+	            return new Promise(function (resolve, reject) {
+
+	                if (!_this3.refreshToken) {
+	                    console.log("Missing refreshToken");
+	                    reject("Missing refreshToken");
+	                    return;
+	                }
+
+	                if (!_this3.appId) {
+	                    console.log("Missing appId");
+	                    reject("Missing appId");
+	                    return;
+	                }
+
+	                var xhr = new XMLHttpRequest(),
+	                    params = {
+	                    "grant_type": "refresh_token",
+	                    "refresh_token": _this3.refreshToken,
+	                    "client_id": _this3.appId
+	                },
+	                    url = _this3.useProxy ? _this3.proxyURL : _this3.loginURL;
+
+	                url = url + "/services/oauth2/token?" + toQueryString(params);
+
+	                xhr.onreadystatechange = function () {
+	                    if (xhr.readyState === 4) {
+	                        if (xhr.status === 200) {
+	                            console.log("Token refreshed");
+	                            var res = JSON.parse(xhr.responseText);
+	                            _this3.accessToken = res.access_token;
+	                            resolve();
+	                        } else {
+	                            console.log("Error while trying to refresh token: " + xhr.responseText);
+	                            reject();
+	                        }
+	                    }
+	                };
+
+	                xhr.open("POST", url, true);
+	                if (!_this3.useProxy) {
+	                    xhr.setRequestHeader("Target-URL", _this3.loginURL);
+	                }
+	                xhr.send();
+	            });
+	        }
+	    }]);
+
+	    return ForceServiceWeb;
+	}(ForceService);
+
+	var ForceServiceCordova = function (_ForceService2) {
+	    _inherits(ForceServiceCordova, _ForceService2);
+
+	    function ForceServiceCordova() {
+	        _classCallCheck(this, ForceServiceCordova);
+
+	        return _possibleConstructorReturn(this, (ForceServiceCordova.__proto__ || Object.getPrototypeOf(ForceServiceCordova)).apply(this, arguments));
+	    }
+
+	    _createClass(ForceServiceCordova, [{
+	        key: "refreshAccessToken",
+	        value: function refreshAccessToken() {
+	            var _this5 = this;
+
+	            return new Promise(function (resolve, reject) {
+	                document.addEventListener("deviceready", function () {
+	                    var oauthPlugin = void 0;
+	                    try {
+	                        oauthPlugin = cordova.require("com.salesforce.plugin.oauth");
+	                    } catch (e) {
+	                        // fail silently
+	                    }
+	                    if (!oauthPlugin) {
+	                        console.error("Salesforce Mobile SDK OAuth plugin not available");
+	                        reject("Salesforce Mobile SDK OAuth plugin not available");
+	                        return;
+	                    }
+	                    oauthPlugin.authenticate(function (response) {
+	                        _this5.accessToken = response.accessToken;
+	                        resolve();
+	                    }, function () {
+	                        console.error("Error refreshing oauth access token using the oauth plugin");
+	                        reject();
+	                    });
+	                }, false);
+	            });
+	        }
+
+	        /**
+	         * @param path: full path or path relative to end point - required
+	         * @param endPoint: undefined or endpoint - optional
+	         * @return object with {endPoint:XX, path:relativePathToXX}
+	         *
+	         * For instance for undefined, "/services/data"     => {endPoint:"/services/data", path:"/"}
+	         *                  undefined, "/services/apex/abc" => {endPoint:"/services/apex", path:"/abc"}
+	         *                  "/services/data, "/versions"    => {endPoint:"/services/data", path:"/versions"}
+	         */
+
+	    }, {
+	        key: "computeEndPointIfMissing",
+	        value: function computeEndPointIfMissing(endPoint, path) {
+	            if (endPoint !== undefined) {
+	                return { endPoint: endPoint, path: path };
+	            } else {
+	                var parts = path.split("/").filter(function (s) {
+	                    return s !== "";
+	                });
+	                if (parts.length >= 2) {
+	                    return { endPoint: "/" + parts.slice(0, 2).join("/"), path: "/" + parts.slice(2).join("/") };
+	                } else {
+	                    return { endPoint: "", path: path };
+	                }
+	            }
+	        }
+	    }, {
+	        key: "request",
+	        value: function request(obj) {
+	            var _this6 = this;
+
+	            if (networkPlugin) {
+	                return new Promise(function (resolve, reject) {
+	                    var obj2 = _this6.computeEndPointIfMissing(obj.endPoint, obj.path);
+	                    if (obj.params === undefined) {
+	                        obj.params = {};
+	                    }
+	                    if ('q' in obj.params) {
+	                        obj.params.q = obj.params.q.replace(/[\n]/g, " ");
+	                    }
+	                    networkPlugin.sendRequest(obj2.endPoint, obj2.path, resolve, reject, obj.method, obj.data || obj.params, obj.headerParams);
+	                });
+	            } else {
+	                return _get(ForceServiceCordova.prototype.__proto__ || Object.getPrototypeOf(ForceServiceCordova.prototype), "request", this).call(this, obj);
+	            }
+	        }
+	    }]);
+
+	    return ForceServiceCordova;
+	}(ForceService);
+
+/***/ }
+/******/ ])
+});
+;

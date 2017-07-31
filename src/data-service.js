@@ -236,6 +236,20 @@ class ForceService {
     }
 
     /**
+     * Convenience function to execute a SOQL queryAll
+     * @param soql
+     * @param batch
+     */
+    queryAll(soql, batch = false) {
+        let r = {
+            path: "/services/data/" + this.apiVersion + "/queryAll",
+            params: {q: soql}
+        };
+        if (batch) return this.batchTransaction(r);
+        return this.request(r);
+    }
+
+    /**
      * Convenience function to retrieve a single record based on its Id
      * @param objectName
      * @param id
