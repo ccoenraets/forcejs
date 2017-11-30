@@ -12,7 +12,7 @@ function getPluginConfig() {
         // new Webpack.optimize.DedupePlugin(),
         // new Webpack.optimize.AggressiveMergingPlugin(),
         new Webpack.optimize.UglifyJsPlugin({
-            sourceMap: false,
+            sourceMap: true,
             compress: {
                 sequences: true,
                 dead_code: true,
@@ -50,8 +50,7 @@ module.exports = [
             library: "force",
             libraryTarget: "umd"
         },
-        module: moduleConfig,
-        plugins: getPluginConfig()
+        module: moduleConfig
     },
     {
         name: "oauth",
