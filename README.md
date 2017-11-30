@@ -532,6 +532,7 @@ Basic Usage:
 Used to execute a SOQL statement
 
 - **soql**: The SOQL statement
+- **batch** (optional): save query for batch call - see more under **.batch()**
 
 - **Return Value**: Promise
 
@@ -552,9 +553,8 @@ service.query("SELECT id, name FROM contact")
 Used to create a record for a Salesforce object
 
 - **objectName**. Required.
-
 - **valueObject**. Required.
-
+- **batch** (optional): save query for batch call - see more under **.batch()**
 - **Return Value**: Promise. When the promise is resolved, an object with the following fields is provided:
     - **errors**: an array of errors (if any)
     - **id**: the record id of the record that was created
@@ -577,8 +577,10 @@ service.create('contact', {FirstName: "Lisa", LastName: "Jones"})
 Used to update a record
 
 - **objectName**. Required.
-
 - **valueObject**. Required. The object must include and Id (or id) field to identify the record to update.
+- **batch** (optional): save query for batch call - see more under **.batch()**
+-
+- **method**. Optional POST/PATCH
 
 - **Return Value**: Promise
 
@@ -599,8 +601,8 @@ service.update('contact', {Id: "0031a000001x7DOAAY", FirstName: "Emma", LastName
 Used to delete a record
 
 - **objectName**. Required.
-
 - **recordId**. Required.
+- **batch** (optional): save query for batch call - see more under **.batch()**
 
 - **Return Value**: Promise
 
@@ -639,10 +641,9 @@ service.upsert('contact', 'My_Contact_Id__c', '101', {FirstName: "Emma", LastNam
 Used to retrieve a single record
 
 - **objectName**. Required.
-
 - **recordId**. Required.
-
 - **fields**. Optional. Array of fields to retrieve. If omitted, all available fields are retrieved.
+- **batch** (optional): save query for batch call - see more under **.batch()**
 
 - **Return Value**: Promise
 
@@ -652,6 +653,48 @@ Example:
 service.retrieve('contact', id)
     .then(contact => {
         console.log(contact);
+    })
+    .catch(error => {
+        console.log(error);
+    });
+```
+
+#### reports(recordId)
+
+Used to return reports
+
+- **recordId**. optional if empty it return all created reports.
+- **batch** (optional): save query for batch call - see more under **.batch()**
+
+- **Return Value**: Promise
+
+Example:
+
+```
+service.reports()
+    .then(contact => {
+        console.log(reports);
+    })
+    .catch(error => {
+        console.log(error);
+    });
+```
+
+#### dasboard(recordId)
+
+Used to return dashboards
+
+- **recordId**. optional if empty it return all created dashboards.
+- **batch** (optional): save query for batch call - see more under **.batch()**
+
+- **Return Value**: Promise
+
+Example:
+
+```
+service.dashboard()
+    .then(contact => {
+        console.log(reports);
     })
     .catch(error => {
         console.log(error);
@@ -706,7 +749,7 @@ Parameters:
 
     *Default*: GET
 
-- **contentType**     
+- **contentType**
 
     The request content type.
 
@@ -725,11 +768,11 @@ A convenience function to use the Chatter API
 Example:
 
 ```
-force.chatter({path: "/users/me"},
-    function(result) {
+force.chatter({path: "/users/me"})
+    .then(result => {
         console.log(result)
-    ),
-    function(error) {
+    })
+    .catch(error => {
         console.log(error);
     });
 ```
@@ -746,7 +789,7 @@ Parameters:
 
     *Default*: GET
 
-- **contentType**     
+- **contentType**
 
     The request content type.
 
@@ -776,12 +819,14 @@ Lists the available objects and their metadata for your organization's data.
 Describes the individual metadata for the specified object.
 
 - **objectName** Object name; e.g. "Account"
+- **batch** (optional): save query for batch call - see more under **.batch()**
 
 #### describe(objectName)
 
 Completely describes the individual metadata at all levels for the specified object.
 
 - **objectName**: object name; e.g. "Account"
+- **batch** (optional): save query for batch call - see more under **.batch()**
 
 #### describeLayout(objectName, recordTypeId)
 
@@ -789,6 +834,7 @@ Fetches the layout configuration for a particular sobject name and record type i
 
 - **objectName**: object name; e.g. "Account"
 - **recordTypeId** (optional): Id of the layout's associated record type
+- **batch** (optional): save query for batch call - see more under **.batch()**
 
 #### queryMore(url)
 
@@ -797,9 +843,45 @@ This should be used if performing a query that retrieves more than can be return
 in accordance with http://www.salesforce.com/us/developer/docs/api_rest/Content/dome_query.htm
 
 - **url**: the url retrieved from nextRecordsUrl or prevRecordsUrl
+- **batch** (optional): save query for batch call - see more under **.batch()**
 
 #### search(sosl)
 
 Executes the specified SOSL search.
 
 - **sosl**: a string containing the search to execute - e.g. "FIND {needle}"
+- **batch** (optional): save query for batch call - see more under **.batch()**
+
+
+#### batch(requests)
+
+Executes batch commands
+the batch parameter in the other calls like query, create will save the request for the batch.
+So you have to call before you execute this function.
+Important note:
+In API version 34.0 and later, subrequests can be calls to the Limits, SObject, Query/QueryAll, Search, Connect,
+and Chatter resources. API version 35.0 adds the ability to use Actions resources.
+
+
+- requests: Promises from the other calls like
+
+```
+// don't do it in production with nested promises :) Chain it or use observals
+    let query: string = 'SELECT id FROM Contact LIMIT 10';
+    let query1: string = 'SELECT id FROM Contact LIMIT 20';
+    let query2: string = 'SELECT id FROM Contact LIMIT 30';
+
+    DataService.getInstance().query(query, true).then(q1 => {
+      DataService.getInstance().query(query1, true).then(q2 => {
+        DataService.getInstance().query(query2, true).then(q3 => {
+          DataService.getInstance().batch([q1, q2, q3]).then((response) => {
+            console.log(q1, q2, q3);
+            console.log(response);
+          });
+        });
+      });
+    });
+```
+
+#### composite(request)
+- request: Promises from the other calls like
