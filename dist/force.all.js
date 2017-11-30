@@ -412,7 +412,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var _this = this;
 
 	            return new Promise(function (resolve, reject) {
-
 	                if (!_this.accessToken && !_this.refreshToken) {
 	                    if (typeof errorHandler === "function") {
 	                        reject("No access token. Login and try again.");
@@ -438,7 +437,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	                xhr.onreadystatechange = function () {
 	                    if (xhr.readyState === 4) {
 	                        if (xhr.status > 199 && xhr.status < 300) {
-	                            resolve(xhr.responseText ? JSON.parse(xhr.responseText) : undefined);
+	                            if (xhr.responseType == 'arraybuffer') {
+	                                resolve(xhr.response);
+	                            } else {
+	                                try {
+	                                    var json = xhr.responseText ? JSON.parse(xhr.responseText) : undefined;
+	                                } catch (err) {
+	                                    var json = xhr.responseText;
+	                                }
+	                                resolve(json);
+	                            }
 	                        } else if (xhr.status === 401 && _this.refreshToken) {
 	                            _this.refreshAccessToken()
 	                            // Try again with the new token
@@ -463,6 +471,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	                xhr.setRequestHeader("Cache-Control", "no-store");
 	                // See http://www.salesforce.com/us/developer/docs/chatterapi/Content/intro_requesting_bearer_token_url.htm#kanchor36
 	                xhr.setRequestHeader("X-Connect-Bearer-Urls", true);
+
+	                if (obj.responseType) {
+	                    xhr.responseType = obj.responseType;
+	                }
 
 	                if (obj.contentType) {
 	                    xhr.setRequestHeader("Content-Type", obj.contentType);
@@ -1165,16 +1177,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var _this6 = this;
 
 	            if (networkPlugin) {
-	                return new Promise(function (resolve, reject) {
-	                    var obj2 = _this6.computeEndPointIfMissing(obj.endPoint, obj.path);
-	                    if (obj.params === undefined) {
-	                        obj.params = {};
-	                    }
-	                    if ('q' in obj.params) {
-	                        obj.params.q = obj.params.q.replace(/[\n]/g, " ");
-	                    }
-	                    networkPlugin.sendRequest(obj2.endPoint, obj2.path, resolve, reject, obj.method, obj.data || obj.params, obj.headerParams);
-	                });
+	                // ignore the SF Cordova plugin and execute a xhr call
+	                if (obj.hasOwnProperty('direct') && obj.direct) {
+	                    obj.responseType = 'arraybuffer';
+	                    return _get(ForceServiceCordova.prototype.__proto__ || Object.getPrototypeOf(ForceServiceCordova.prototype), "request", this).call(this, obj);
+	                } else {
+	                    return new Promise(function (resolve, reject) {
+
+	                        var obj2 = _this6.computeEndPointIfMissing(obj.endPoint, obj.path);
+	                        if (obj.params === undefined) {
+	                            obj.params = {};
+	                        }
+	                        if ('q' in obj.params) {
+	                            obj.params.q = obj.params.q.replace(/[\n]/g, " ");
+	                        }
+	                        networkPlugin.sendRequest(obj2.endPoint, obj2.path, resolve, reject, obj.method, obj.data || obj.params, obj.headerParams);
+	                    });
+	                }
 	            } else {
 	                return _get(ForceServiceCordova.prototype.__proto__ || Object.getPrototypeOf(ForceServiceCordova.prototype), "request", this).call(this, obj);
 	            }

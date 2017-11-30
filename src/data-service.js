@@ -40,14 +40,14 @@ let toQueryString = (obj, encode = true) => {
 let parseUrl = url => {
     let match = url.match(/^(https?\:)\/\/(([^:\/?#]*)(?:\:([0-9]+))?)([^?#]*)(\?[^#]*|)(#.*|)$/);
     return match && {
-            protocol: match[1],
-            host: match[2],
-            hostname: match[3],
-            port: match[4],
-            path: match[5],
-            params: parseQueryString(match[6]),
-            hash: match[7]
-        };
+        protocol: match[1],
+        host: match[2],
+        hostname: match[3],
+        port: match[4],
+        path: match[5],
+        params: parseQueryString(match[6]),
+        hash: match[7]
+    };
 };
 
 // Keeps track of single instance when instance is created with singleton form of createInstance:
@@ -156,8 +156,6 @@ class ForceService {
     request(obj) {
 
         return new Promise((resolve, reject) => {
-
-
             if (!this.accessToken && !this.refreshToken) {
                 if (typeof errorHandler === "function") {
                     reject("No access token. Login and try again.");
@@ -183,7 +181,16 @@ class ForceService {
             xhr.onreadystatechange = () => {
                 if (xhr.readyState === 4) {
                     if (xhr.status > 199 && xhr.status < 300) {
-                        resolve(xhr.responseText ? JSON.parse(xhr.responseText) : undefined);
+                        if (xhr.responseType == 'arraybuffer') {
+                            resolve(xhr.response);
+                        } else {
+                            try {
+                                var json = xhr.responseText ? JSON.parse(xhr.responseText) : undefined;
+                            } catch (err) {
+                                var json = xhr.responseText;
+                            }
+                            resolve(json);
+                        }
                     } else if (xhr.status === 401 && this.refreshToken) {
                         this.refreshAccessToken()
                         // Try again with the new token
@@ -203,6 +210,10 @@ class ForceService {
             xhr.setRequestHeader("Cache-Control", "no-store");
             // See http://www.salesforce.com/us/developer/docs/chatterapi/Content/intro_requesting_bearer_token_url.htm#kanchor36
             xhr.setRequestHeader("X-Connect-Bearer-Urls", true);
+
+            if (obj.responseType) {
+                xhr.responseType = obj.responseType;
+            }
 
             if (obj.contentType) {
                 xhr.setRequestHeader("Content-Type", obj.contentType);
@@ -781,24 +792,32 @@ class ForceServiceCordova extends ForceService {
 
     request(obj) {
         if (networkPlugin) {
-            return new Promise((resolve, reject) => {
-                let obj2 = this.computeEndPointIfMissing(obj.endPoint, obj.path);
-                if (obj.params === undefined) {
-                    obj.params = {};
-                }
-                if ('q' in obj.params) {
-                    obj.params.q = obj.params.q.replace(/[\n]/g, " ");
-                }
-                networkPlugin.sendRequest(
-                    obj2.endPoint,
-                    obj2.path,
-                    resolve,
-                    reject,
-                    obj.method,
-                    obj.data || obj.params,
-                    obj.headerParams
-                );
-            });
+            // ignore the SF Cordova plugin and execute a xhr call
+            if (obj.hasOwnProperty('direct') && obj.direct) {
+                obj.responseType = 'arraybuffer';
+                return super.request(obj);
+            } else {
+                return new Promise((resolve, reject) => {
+
+                    let obj2 = this.computeEndPointIfMissing(obj.endPoint, obj.path);
+                    if (obj.params === undefined) {
+                        obj.params = {};
+                    }
+                    if ('q' in obj.params) {
+                        obj.params.q = obj.params.q.replace(/[\n]/g, " ");
+                    }
+                    networkPlugin.sendRequest(
+                        obj2.endPoint,
+                        obj2.path,
+                        resolve,
+                        reject,
+                        obj.method,
+                        obj.data || obj.params,
+                        obj.headerParams
+                    );
+                });
+            }
+
         } else {
             return super.request(obj);
         }
