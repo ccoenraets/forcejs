@@ -2,8 +2,7 @@
  * forcejs - REST toolkit for Salesforce.com
  * forcejs/data-service - Salesforce APIs data service module
  * Author: Christophe Coenraets @ccoenraets
- * Fork: David Hohl <david.hohl@capgemini.com>
- * Version: 2.1.0
+ * Version: 2.2.1
  */
 "use strict";
 
@@ -113,7 +112,6 @@ class ForceService {
         } else {
             this.useProxy = options.useProxy;
         }
-        console.log('useProxy: ' + options.useProxy + ' ' + this.useProxy);
 
         // Only required when using REST APIs in an app hosted on your own server to avoid cross domain policy issues
         // To override default, pass proxyURL in init(props)
@@ -139,8 +137,6 @@ class ForceService {
         if (url.slice(-1) === "/") {
             url = url.slice(0, -1);
         }
-
-        console.log('useProxy:' + this.useProxy + ' instanceURL: ' + this.instanceURL + 'requestBaseURL: ' + url);
         return url;
     }
 
