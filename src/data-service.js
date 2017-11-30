@@ -103,12 +103,17 @@ class ForceService {
         this.refreshToken = oauth.refreshToken;
         this.userId = oauth.userId;
 
-        this.apiVersion = options.apiVersion || "v36.0";
+        this.apiVersion = options.apiVersion || "v41.0";
         this.loginURL = options.loginURL || "https://login.salesforce.com";
 
         // Whether or not to use a CORS proxy. Defaults to false if app running in Cordova, in a VF page,
         // or using the Salesforce console. Can be overriden in init()
-        this.useProxy = options.useProxy || (window.cordova || window.SfdcApp || window.sforce) ? false : true;
+        if (options.useProxy == undefined) {
+            this.useProxy = (window.cordova || window.SfdcApp || window.sforce || window.LCC) ? false : true;
+        } else {
+            this.useProxy = options.useProxy;
+        }
+        console.log('useProxy: ' + options.useProxy + ' ' + this.useProxy);
 
         // Only required when using REST APIs in an app hosted on your own server to avoid cross domain policy issues
         // To override default, pass proxyURL in init(props)
@@ -135,6 +140,7 @@ class ForceService {
             url = url.slice(0, -1);
         }
 
+        console.log('useProxy:' + this.useProxy + ' instanceURL: ' + this.instanceURL + 'requestBaseURL: ' + url);
         return url;
     }
 
