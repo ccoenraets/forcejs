@@ -349,17 +349,28 @@ var force = (function () {
                 errorHandler('Salesforce Mobile SDK OAuth plugin not available');
                 return;
             }
+
+            var authSuccess = function(creds) {
+                // Initialize ForceJS
+                init({accessToken: creds.accessToken, instanceURL: creds.instanceUrl, refreshToken: creds.refreshToken});
+                if (typeof successHandler === "function") successHandler();
+            };
+
+            var authFailure = function(error) {
+                console.log(error);
+                if (typeof errorHandler === "function") errorHandler(error);
+            };
+
             oauthPlugin.getAuthCredentials(
-                function (creds) {
-                    // Initialize ForceJS
-                    init({accessToken: creds.accessToken, instanceURL: creds.instanceUrl, refreshToken: creds.refreshToken});
-                    if (typeof successHandler === "function") successHandler();
-                },
-                function (error) {
-                    console.log(error);
-                    if (typeof errorHandler === "function") errorHandler(error);
+                authSuccess,
+                function() {
+                    oauthPlugin.authenticate(
+                        authSuccess,
+                        authFailure
+                    );
                 }
             );
+            
         }, false);
     }
 
